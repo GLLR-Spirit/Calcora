@@ -1,0 +1,1 @@
+window.CALCORA_SETTINGS=window.CALCORA_SETTINGS||{};window.CALCORA_SETTINGS.languages=[{code:"en",label:"English",dir:"ltr"},{code:"fr",label:"Français",dir:"ltr"},{code:"ar",label:"العربية",dir:"rtl"}];

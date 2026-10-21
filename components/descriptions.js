@@ -1,0 +1,1 @@
+window.CALCORA_DESCRIPTIONS={average:{category:"education",formula:"sum(mark × coefficient) / sum(coefficients)",note:"Confirm the institution's grading rules."},percentage:{category:"mathematics",formula:"value × percentage / 100"},units:{category:"everyday",note:"Convert only between units of the same dimension."}};

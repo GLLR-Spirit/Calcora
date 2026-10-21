@@ -1,0 +1,1 @@
+window.CALCORA_SETTINGS=window.CALCORA_SETTINGS||{};window.CALCORA_SETTINGS.themes=[{id:"light",file:"assets/css/theme-light.css"},{id:"dark",file:"assets/css/theme-dark.css"}];

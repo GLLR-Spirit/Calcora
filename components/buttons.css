@@ -1,0 +1,1 @@
+.primary,button{transition:filter .15s,transform .15s}.primary:hover,button:hover{filter:brightness(1.06)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
