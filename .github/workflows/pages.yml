@@ -23,6 +23,8 @@ jobs:
           node --check assets/js/app.js
           node --check assets/js/calculator-pages.js
           node --check assets/js/algeria-grades.js
+          node --check assets/js/education-profile.js
+          node --check assets/js/profile-pages.js
           node --check locales/en.js
           node --check locales/fr.js
           node --check locales/ar.js
