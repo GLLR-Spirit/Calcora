@@ -18,6 +18,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Validate JavaScript syntax
+        run: |
+          node --check assets/js/app.js
+          node --check assets/js/calculator-pages.js
+          node --check assets/js/algeria-grades.js
+          node --check locales/en.js
+          node --check locales/fr.js
+          node --check locales/ar.js
       - uses: actions/configure-pages@v5
         with:
           enablement: true
