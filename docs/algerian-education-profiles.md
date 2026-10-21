@@ -1,25 +1,31 @@
-# Algerian education profiles — implementation status
+# Algerian education profiles — status and sources
 
-Calcora now has separate calculator pages for primary school, middle school/BEM, high school, BAC, university, and work-related calculations. These pages share a reusable calculation engine.
+## BAC streams
+Separate profile pages are available for:
+- Mathematics
+- Experimental sciences
+- Technical mathematics
+- Management and economics
+- Foreign languages
+- Letters and philosophy
+- Arts
 
-## What the pages currently do
-- Simple average and weighted average for user-entered marks.
-- Combined two-period average with editable weights.
-- Required mark calculation for a target average.
-- Editable mark scale and coefficients.
-- English, French and Arabic interface, including Arabic RTL.
-- Light/dark theme preference stored locally in the browser.
+**Coefficient status:** coefficients and detailed subject lists are intentionally not hard-coded as official. They must be verified for the exact exam session and stream from current Ministry publications before being published as authoritative.
 
-## Important limitations
-The sample rows are neutral examples, not official subjects or coefficients. The generic two-period formula is only appropriate when the institution uses that weighting. Do not present a page as an official BAC, BEM or university rule set without a current primary source.
+The Algerian Ministry of National Education has published an announcement for the 2026–2027 school year stating that BAC exam subjects are those programmed in the third year of secondary school and that the exam pattern has not changed. This announcement is not itself a complete official coefficient table. Source: https://www.education.gov.dz/2026/07/30/وزير-التربية-الوطنية-ينشّط-ندوة-صحفية-يقدّم-فيها-توضيحات-حول-الترتيبات-البيداغوجية-الجديدة-الخاصة-بالدخول-المدرسي/
 
-## Verification checklist before adding official profiles
-1. Confirm the applicable academic year and level/stream.
-2. Find an official Ministry or institution document.
-3. Record its exact URL/title, publication date and relevant page/section.
-4. Confirm scale, subject list, coefficients, term/semester weighting, rounding, compensation and progression rules.
-5. Add a source note to the relevant profile and test examples against the source.
-6. Re-check when the academic year or regulation changes.
+## University fields
+Separate profile pages are available for computer science, mathematics, physics, biology/life sciences, economics/management, law, medical sciences, and engineering/technology.
 
-## Next work
-Add verified subject lists and coefficients by BAC stream and university field, then expand modules/UE and semester aggregation with institution-specific options.
+The MESRS student guide explains the general LMD calculation structure: subject marks are combined using their assessment coefficients; UE averages are weighted by subject coefficients; semester averages are weighted by UE coefficients; annual averages combine the relevant UEs. Program-specific coefficients and special rules must be obtained from the current programme/regulations. Source: https://services.mesrs.dz/cned/étudiant/lmd-à-l-université.html
+
+Medical sciences may have distinct annual validation rules and eliminatory grades; do not apply the generic LMD rule blindly. Source: https://services.mesrs.dz/cned/étudiant/sciences-médicales.html
+
+## Shared profile behaviour
+- English, French and Arabic; Arabic switches to RTL.
+- Light/dark theme.
+- Shared grade calculator and editable values.
+- Official source links and an explicit warning where rules are not verified.
+
+## Verification policy
+Never call a coefficient table “official” until the exact stream/programme, academic year/session, primary source, publication date, mark scale, weighting, rounding, compensation, and any eliminatory rules have been checked. Revisit profiles when official rules change.
