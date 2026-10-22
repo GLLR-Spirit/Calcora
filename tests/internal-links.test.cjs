@@ -142,3 +142,18 @@ test("student dashboard connects explicitly tagged revision cards to matching su
   assert.match(dashboard, /x\.name\.trim\(\)\.toLocaleLowerCase\(\)===row\.name\.toLocaleLowerCase\(\)/);
   assert.match(dashboard, /subjectRevisionEmpty:/);
 });
+
+
+test("revision quiz results retain per-subject scores for targeted recommendations", () => {
+  const revision = fs.readFileSync("assets/js/revision.js", "utf8");
+  const dashboard = fs.readFileSync("assets/js/student-workspace.js", "utf8");
+  assert.match(revision, /const subjectScores=\{\}/);
+  assert.match(revision, /subjectScores\[key\]\.total\+\+/);
+  assert.match(revision, /subjectScores\[key\]\.score\+\+/);
+  assert.match(revision, /date:Date\.now\(\),subjectScores/);
+  assert.match(dashboard, /recommendationLowGrade:/);
+  assert.match(dashboard, /recommendationMistakes:/);
+  assert.match(dashboard, /recommendationQuiz:/);
+  assert.match(dashboard, /quizBySubject\.get\(row\.name\.toLocaleLowerCase\(\)\)/);
+  assert.match(dashboard, /\.sort\(\(a,b\)=>b\.priority-a\.priority/);
+});
