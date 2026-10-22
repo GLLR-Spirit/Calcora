@@ -21,6 +21,7 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           node --check assets/js/app.js
+          node --check assets/js/discovery.js
           node --check assets/js/calculator-pages.js
           node --check assets/js/algeria-grades.js
           node --check assets/js/education-profile.js
