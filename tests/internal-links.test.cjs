@@ -110,3 +110,16 @@ test("LMD low marks can be sent to revision cards without replacing existing car
   assert.match(revision, /params\.get\("source"\)==="lmd"/);
   assert.match(revision, /calcora_revision_results_v1/);
 });
+
+
+test("student dashboard summarizes revision scores and per-card mistakes from existing local storage", () => {
+  const dashboard = fs.readFileSync("assets/js/student-workspace.js", "utf8");
+  assert.match(dashboard, /calcora_revision_results_v1/);
+  assert.match(dashboard, /calcora_revision_cards_v1/);
+  assert.match(dashboard, /revisionResults\.reduce\(\(a,b\)=>Number\(b\.score\)\/Number\(b\.total\)>Number\(a\.score\)\/Number\(a\.total\)\?b:a\)/);
+  assert.match(dashboard, /revisionCards\.reduce\(\(sum,c\)=>sum\+Math\.max\(0,Number\(c\.mistakes\)\|\|0\),0\)/);
+  assert.match(dashboard, /mistakes\.slice\(0,3\)/);
+  for (const label of ["revisionProgress", "revisionMistakes", "revisionTopMistakes", "revisionBest"]) {
+    assert.match(dashboard, new RegExp(label + ":"));
+  }
+});
