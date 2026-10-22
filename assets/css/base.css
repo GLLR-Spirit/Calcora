@@ -129,3 +129,91 @@ footer a{white-space:nowrap}
 .category-grid .card{min-height:84px;display:flex;align-items:center;gap:12px;font-weight:700}
 .home-notice{margin-top:36px!important}
 @media(max-width:600px){.home-section-heading{align-items:flex-start}.section-link{font-size:.82rem;margin-top:8px}.hero-trust{gap:8px 14px}.hero-trust span{font-size:.8rem}}
+
+
+/* Academic tools polish — visual-only, keeps calculator and storage logic untouched */
+.student-workspace > aside,
+.study-planner > aside{
+  border:1px solid color-mix(in srgb,var(--accent) 24%,var(--border));
+  border-inline-start:4px solid var(--accent);
+  background:var(--surface);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-soft);
+}
+.student-workspace .student-summary-grid{gap:14px}
+.student-workspace .student-stat,
+.study-planner .student-stat{
+  position:relative;
+  overflow:hidden;
+  border-color:color-mix(in srgb,var(--accent) 18%,var(--border));
+  box-shadow:var(--shadow-soft);
+}
+.student-workspace .student-stat:before,
+.study-planner .student-stat:before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:3px;
+  background:var(--accent);
+  opacity:.72;
+}
+.student-workspace .student-stat strong,
+.study-planner .student-stat strong{letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.student-workspace .student-section-heading{margin-bottom:14px}
+.student-workspace .student-actions button,
+.study-planner .study-plan-actions button{min-height:40px}
+.student-workspace .student-table-wrap{box-shadow:var(--shadow-soft)}
+.student-workspace .student-table tbody tr{transition:background .16s ease}
+.student-workspace .student-table tbody tr:hover{background:color-mix(in srgb,var(--soft) 48%,var(--surface))}
+.student-workspace .student-table td{vertical-align:middle}
+.student-workspace .student-table td button{white-space:nowrap}
+.student-workspace .student-table input,
+.student-workspace .student-table select{min-height:40px}
+.student-workspace .semester-chart,
+.student-workspace .trend-row,
+.student-workspace .history-card,
+.student-workspace .dashboard-card{box-shadow:var(--shadow-soft)}
+.student-workspace .semester-bar-track,
+.student-workspace .trend-track{border:1px solid color-mix(in srgb,var(--border) 65%,transparent)}
+.student-workspace .history-card{transition:border-color .18s ease,transform .18s ease}
+.student-workspace .history-card:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+.study-planner .study-hero{
+  position:relative;
+  overflow:hidden;
+  box-shadow:var(--shadow-soft);
+  background:radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 55%),linear-gradient(135deg,var(--hero),var(--surface));
+}
+.study-planner .study-kicker{display:inline-flex;align-items:center;gap:8px;padding:5px 10px;border:1px solid color-mix(in srgb,var(--accent) 22%,var(--border));border-radius:999px;background:var(--surface)}
+.study-planner .study-form{box-shadow:var(--shadow-soft)}
+.study-planner .study-plan{
+  box-shadow:var(--shadow-soft);
+  transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.study-planner .study-plan:hover{border-color:color-mix(in srgb,var(--accent) 40%,var(--border));box-shadow:var(--shadow-lift)}
+.study-planner .study-plan.is-done{background:color-mix(in srgb,var(--soft) 35%,var(--surface))}
+.study-planner .study-badge{background:var(--surface);font-weight:650}
+.study-planner .study-badge.high{background:color-mix(in srgb,#d97757 9%,var(--surface))}
+.study-planner .study-badge.medium{background:color-mix(in srgb,#c49a35 10%,var(--surface))}
+.study-planner .study-badge.low{background:color-mix(in srgb,#409b79 9%,var(--surface))}
+.study-planner .study-badge.overdue{background:color-mix(in srgb,#c84a4a 9%,var(--surface))}
+.study-planner .weekly-day{
+  min-width:0;
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  background:var(--surface);
+  box-shadow:var(--shadow-soft);
+}
+.study-planner .weekly-day h3{letter-spacing:-.025em}
+.study-planner .weekly-item{overflow-wrap:anywhere;padding:10px 12px;border-radius:10px}
+.study-planner .study-tips{border:1px solid var(--border);background:var(--soft)}
+@media(max-width:760px){
+  .student-workspace .student-section-heading{gap:12px}
+  .student-workspace .student-actions{width:100%}
+  .student-workspace .student-actions button{flex:1}
+  .study-planner .study-hero{padding:20px}
+}
+@media(hover:none){
+  .student-workspace .history-card:hover,
+  .study-planner .study-plan:hover{transform:none}
+}
