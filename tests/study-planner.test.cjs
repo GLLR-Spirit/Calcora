@@ -139,3 +139,6 @@ test("study planner rejects oversized backup files before parsing JSON", () => {
   const script = fs.readFileSync("assets/js/study-planner.js", "utf8");
   assert.match(script, /file\.size>2\*1024\*1024/);
 });
+
+
+test("storage write failures use a dedicated localized message instead of the invalid-backup message",()=>{const fs=require("node:fs");const script=fs.readFileSync("assets/js/study-planner.js","utf8");assert.match(script,/function persist\(\)\{try\{localStorage\.setItem\(KEY,JSON\.stringify\(\{format:"calcora-study-planner",version:1,plans\}\)\)\}catch\(_\)\{status\("storageError"\)\}\}/);assert.match(script,/storageError:"Could not save changes in this browser/);assert.match(script,/storageError:"Impossible d’enregistrer les modifications/);assert.match(script,/storageError:"تعذر حفظ التغييرات/);});
