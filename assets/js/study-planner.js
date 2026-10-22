@@ -27,7 +27,7 @@ function buildWeeklySchedule(items,now=today(),dailyLimit=90){
  for(let offset=0;offset<7;offset++){
   const dateObj=new Date(now+"T12:00:00Z");dateObj.setUTCDate(dateObj.getUTCDate()+offset);const date=dateObj.toISOString().slice(0,10);let left=limit;const allocations=[];
   while(left>0){const candidates=valid.filter(p=>p.examDate>=date&&(remaining.get(p.id)||0)>0);if(!candidates.length)break;
-   candidates.sort((a,b)=>({high:3,medium:2,low:1}[b.priority]/(Math.max(0,daysUntil(b.examDate,date))+1)-({high:3,medium:2,low:1}[a.priority]/(Math.max(0,daysUntil(a.examDate,date))+1))||daysUntil(a.examDate,date)-daysUntil(b.examDate,date)||a.subject.localeCompare(b.subject));
+   candidates.sort((a,b)=>{const score=p=>({high:3,medium:2,low:1}[p.priority])/(Math.max(0,daysUntil(p.examDate,date))+1);return score(b)-score(a)||daysUntil(a.examDate,date)-daysUntil(b.examDate,date)||a.subject.localeCompare(b.subject)});
    const chosen=candidates[0],minutes=Math.min(30,left,remaining.get(chosen.id));if(minutes<=0)break;
    const found=allocations.find(x=>x.id===chosen.id);if(found)found.minutes+=minutes;else allocations.push({id:chosen.id,subject:chosen.subject,examDate:chosen.examDate,priority:chosen.priority,minutes});
    remaining.set(chosen.id,remaining.get(chosen.id)-minutes);left-=minutes;
