@@ -24,3 +24,6 @@
 
 /* University pathway planner */
 .planner-table{min-width:1000px}.student-workspace .row{align-items:end}.student-workspace .field{flex:1;min-width:190px}.student-workspace input,.student-workspace select{max-width:100%}
+
+/* Academic progress dashboard */
+.academic-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}.dashboard-card{display:block;min-width:0}.dashboard-card p{overflow-wrap:anywhere}.dashboard-card ul{margin:10px 0 0;padding-inline-start:22px}.dashboard-card li{margin:6px 0}.academic-dashboard .dashboard-card strong{font-size:1rem}@media(max-width:700px){.academic-dashboard-grid{grid-template-columns:1fr}}
