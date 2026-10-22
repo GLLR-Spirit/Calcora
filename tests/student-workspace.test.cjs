@@ -235,10 +235,10 @@ test("snapshot creation stores overall and semester averages from the captured s
 
 test("student backup validators reject malformed records before import", () => {
   const start = source.indexOf("function validImportedSubject(x){");
-  const end = source.indexOf("\\nfunction esc(v){", start);
+  const end = source.indexOf("\nfunction esc(v){", start);
   assert.ok(start >= 0 && end > start);
   const sandbox = {};
-  vm.runInNewContext(source.slice(start, end) + "\\nglobalThis.validSubject=validImportedSubject;globalThis.validSnapshot=validImportedSnapshot;", sandbox);
+  vm.runInNewContext(source.slice(start, end) + "\nglobalThis.validSubject=validImportedSubject;globalThis.validSnapshot=validImportedSnapshot;", sandbox);
   assert.equal(sandbox.validSubject({name:"Math",mark:"0",coefficient:"1",semester:"1"}), true);
   assert.equal(sandbox.validSubject({name:"Math",mark:"21",coefficient:"1"}), false);
   assert.equal(sandbox.validSubject({name:"Math",mark:"10",coefficient:"0"}), false);
@@ -250,10 +250,10 @@ test("student backup validators reject malformed records before import", () => {
 
 test("university backup validator rejects invalid modules and oversized values", () => {
   const start = plannerSource.indexOf("function validImportedModule(m){");
-  const end = plannerSource.indexOf("\\nfunction f(v){", start);
+  const end = plannerSource.indexOf("\nfunction f(v){", start);
   assert.ok(start >= 0 && end > start);
   const sandbox = {};
-  vm.runInNewContext(plannerSource.slice(start, end) + "\\nglobalThis.validModule=validImportedModule;", sandbox);
+  vm.runInNewContext(plannerSource.slice(start, end) + "\nglobalThis.validModule=validImportedModule;", sandbox);
   assert.equal(sandbox.validModule({name:"Algorithms",ue:"Math",mark:"10",moduleCoeff:"2",ueCoeff:"1",semester:"1"}), true);
   assert.equal(sandbox.validModule({name:"Algorithms",mark:"21",moduleCoeff:"1",ueCoeff:"1"}), false);
   assert.equal(sandbox.validModule({name:"Algorithms",mark:"10",moduleCoeff:"0",ueCoeff:"1"}), false);
