@@ -131,7 +131,7 @@ test("subject forecast formula handles remaining ungraded coefficient", () => {
 
 test("target simulator identifies an already-achieved goal and impossible targets", () => {
   const need = (current, goal, done, remaining) => (goal * 100 - current * done) / remaining;
-  assert.ok(need(15, 12, 60, 40) <= 0);
+  assert.ok(need(20, 10, 60, 40) <= 0);
   assert.ok(need(18, 19, 80, 20) > 20);
   assert.equal(need(10, 12, 50, 50), 14);
   assert.match(source, /need<=0\?t\("already"\):need>20\?t\("impossible"\)/);
@@ -153,7 +153,7 @@ test("complete JSON backup includes a version, goal, subjects and bounded histor
 
 test("import validation rejects too many subjects, invalid marks and invalid coefficients", () => {
   assert.match(source, /!Array\.isArray\(a\)\|\|a\.length>500/);
-  assert.match(source, /Number\(x\.mark\)<0\|\|Number\(x\.mark\)>20/);
+  assert.match(source, /Number\.isFinite\(Number\(x\.mark\)\)&&Number\(x\.mark\)>=0&&Number\(x\.mark\)<=20/);
   assert.match(source, /Number\(x\.coefficient\?\?1\)<=0/);
   assert.match(source, /if\(!Array\.isArray\(d\.history\)\|\|d\.history\.length>500\)throw Error\("history"\)/);
 });
