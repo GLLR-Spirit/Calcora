@@ -79,3 +79,56 @@ test("weekly schedule excludes completed and already overdue plans and reports u
  ],"2026-10-22",30);
  assert.equal(result.unscheduledMinutes,790);assert.ok(result.days.every(d=>d.items.every(x=>x.subject==="Future")));
 });
+
+
+test("revision planner reads only valid student workspace subjects from the shared local storage key", () => {
+  const previous = global.localStorage;
+  const records = [
+    { id: "1", name: "  Algorithms ", mark: "8", coefficient: "2", semester: "2" },
+    { id: "2", name: "Physics", mark: "", coefficient: "1", semester: "1" },
+    { id: "3", name: "Invalid coefficient", mark: "10", coefficient: "0", semester: "1" },
+    { id: "4", name: "", mark: "5", coefficient: "1", semester: "1" },
+    null
+  ];
+  global.localStorage = {
+    getItem(key) {
+      assert.equal(key, "calcora-student-workspace-v1");
+      return JSON.stringify(records);
+    }
+  };
+  try {
+    assert.deepEqual(planner.readWorkspaceSubjects(), [
+      { name: "Algorithms", mark: "8", coefficient: 2, semester: "2" },
+      { name: "Physics", mark: "", coefficient: 1, semester: "1" }
+    ]);
+  } finally {
+    if (previous === undefined) delete global.localStorage;
+    else global.localStorage = previous;
+  }
+});
+
+test("shared language and theme preferences use the same storage keys across all three student tools", () => {
+  const fs = require("node:fs");
+  const workspace = fs.readFileSync("assets/js/student-workspace.js", "utf8");
+  const university = fs.readFileSync("assets/js/university-planner.js", "utf8");
+  const study = fs.readFileSync("assets/js/study-planner.js", "utf8");
+  for (const script of [workspace, university, study]) {
+    assert.match(script, /calcora-language/);
+    assert.match(script, /calcora-theme/);
+    assert.match(script, /window\.addEventListener\("storage"/);
+  }
+});
+
+test("changes from another browser tab refresh the shared student data and preferences", () => {
+  const fs = require("node:fs");
+  const workspace = fs.readFileSync("assets/js/student-workspace.js", "utf8");
+  const university = fs.readFileSync("assets/js/university-planner.js", "utf8");
+  const study = fs.readFileSync("assets/js/study-planner.js", "utf8");
+  assert.match(workspace, /e\.key===KEY\|\|e\.key===HKEY/);
+  assert.match(study, /e\.key==="calcora-student-workspace-v1"\)renderWorkspaceSubjects\(\)/);
+  assert.match(university, /if\(e\.key===KEY\)\{load\(\);render\(\)\}/);
+  for (const script of [workspace, university, study]) {
+    assert.match(script, /e\.key==="calcora-language"&&e\.newValue/);
+    assert.match(script, /e\.key==="calcora-theme"/);
+  }
+});
