@@ -21,3 +21,6 @@
 
 /* Student progress history */
 .history-section .row{align-items:end}.history-section .field{flex:1;min-width:230px}.history-list{display:grid;gap:12px;margin-top:16px}.history-card{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border:1px solid var(--border);background:var(--surface);border-radius:14px;padding:16px}.history-card strong,.history-card small{display:block}.history-card small{color:var(--muted)}.history-card p{margin:8px 0 0;font-size:.92rem}.history-card .student-actions{margin-inline-start:auto}@media(max-width:600px){.history-card{align-items:flex-start}.history-card .student-actions{margin-inline-start:0}}
+
+/* University pathway planner */
+.planner-table{min-width:1000px}.student-workspace .row{align-items:end}.student-workspace .field{flex:1;min-width:190px}.student-workspace input,.student-workspace select{max-width:100%}

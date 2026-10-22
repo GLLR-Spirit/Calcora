@@ -28,6 +28,7 @@ jobs:
           node --check assets/js/profile-pages.js
           node --check assets/js/lmd-calculator.js
           node --check assets/js/student-workspace.js
+          node --check assets/js/university-planner.js
           node --check locales/en.js
           node --check locales/fr.js
           node --check locales/ar.js
