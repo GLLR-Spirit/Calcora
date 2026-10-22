@@ -72,3 +72,16 @@ test("all local HTML links and asset references point to existing files", () => 
 
   assert.deepEqual(missing, [], "Broken local links or assets were found");
 });
+
+
+test("LMD calculator starts without invented marks and supports bounded validated backups", () => {
+  const html = fs.readFileSync("education-levels/university/lmd-calculator.html", "utf8");
+  const js = fs.readFileSync("assets/js/lmd-calculator.js", "utf8");
+  assert.match(html, /id="export-backup"/);
+  assert.match(html, /id="import-backup"/);
+  assert.match(js, /const STORAGE_KEY="calcora-lmd-calculator-v1"/);
+  assert.match(js, /d\.format==="calcora-lmd-backup"&&d\.version===1&&Array\.isArray\(d\.modules\)&&d\.modules\.length<=500/);
+  assert.match(js, /file\.size>1024\*1024/);
+  assert.doesNotMatch(js, /add\(\{name:"Algorithmique",ue:"UE Fondamentale",semester:"S1",cc:"12",exam:"14"\}\)/);
+  assert.match(js, /localStorage\.getItem\(STORAGE_KEY\)/);
+});
