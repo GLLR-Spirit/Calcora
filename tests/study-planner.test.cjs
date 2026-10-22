@@ -52,3 +52,6 @@ test("homepage links to the revision planner and deployment checks include its t
   assert.match(workflow,/node --check assets\/js\/study-planner\.js/);
   assert.match(workflow,/node --test tests\/\*\.test\.cjs/);
 });
+
+test("suggests revision priorities from marks and treats ungraded subjects as high priority",()=>{assert.equal(planner.suggestedPriority(""),"high");assert.equal(planner.suggestedPriority(null),"high");assert.equal(planner.suggestedPriority(9.99),"high");assert.equal(planner.suggestedPriority(10),"medium");assert.equal(planner.suggestedPriority(11.99),"medium");assert.equal(planner.suggestedPriority(12),"low")});
+test("revision planner reads shared workspace key and exposes integration UI",()=>{const fs=require("node:fs");const script=fs.readFileSync("assets/js/study-planner.js","utf8");const html=fs.readFileSync("study-planner.html","utf8");const workspace=fs.readFileSync("student-workspace.html","utf8");assert.match(script,/calcora-student-workspace-v1/);assert.match(script,/renderWorkspaceSubjects/);assert.match(html,/id="workspace-subjects"/);assert.match(workspace,/href="study-planner\.html"/)});
