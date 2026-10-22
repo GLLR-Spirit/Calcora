@@ -123,3 +123,22 @@ test("student dashboard summarizes revision scores and per-card mistakes from ex
     assert.match(dashboard, new RegExp(label + ":"));
   }
 });
+
+
+test("revision cards can be tagged with an existing academic subject and remain optional", () => {
+  const html = fs.readFileSync("revision.html", "utf8");
+  const revision = fs.readFileSync("assets/js/revision.js", "utf8");
+  assert.match(html, /id="new-subject"/);
+  assert.match(revision, /calcora-student-workspace-v1/);
+  assert.match(revision, /cards\.push\(\{q,a,\.\.\.\(subject\?\{subject\}:\{\}\)\}\)/);
+  assert.match(revision, /subjectLabel:/);
+  assert.match(revision, /c\.subject\?'<small>'/);
+});
+
+test("student dashboard connects explicitly tagged revision cards to matching subjects only", () => {
+  const dashboard = fs.readFileSync("assets/js/student-workspace.js", "utf8");
+  assert.match(dashboard, /subjectRevisionTitle:/);
+  assert.match(dashboard, /revisionCards\.filter\(c=>typeof c\.subject==="string"&&c\.subject\.trim\(\)\)/);
+  assert.match(dashboard, /x\.name\.trim\(\)\.toLocaleLowerCase\(\)===row\.name\.toLocaleLowerCase\(\)/);
+  assert.match(dashboard, /subjectRevisionEmpty:/);
+});
