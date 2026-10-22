@@ -128,7 +128,7 @@ test("changes from another browser tab refresh the shared student data and prefe
   assert.match(study, /e\.key==="calcora-student-workspace-v1"\)renderWorkspaceSubjects\(\)/);
   assert.match(university, /if\(e\.key===KEY\)\{load\(\);render\(\)\}/);
   for (const script of [workspace, university, study]) {
-    assert.match(script, /(e\.key==="calcora-language"\|\|e\.key===LANG_KEY)&&e\.newValue/);
-    assert.match(script, /(e\.key==="calcora-theme"\|\|e\.key===THEME_KEY)/);
+    assert.ok(/e\.key==="calcora-language"&&e\.newValue/.test(script) || /e\.key===LANG_KEY&&e\.newValue/.test(script));
+    assert.ok(/e\.key==="calcora-theme"/.test(script) || /e\.key===THEME_KEY/.test(script));
   }
 });
