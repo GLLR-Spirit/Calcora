@@ -188,3 +188,24 @@ test("student workspace provides Arabic RTL and the search/filter controls", () 
   assert.match(html, /id="subject-search"/);
   assert.match(html, /id="semester-filter"/);
 });
+
+
+test("CSV parser handles quoted commas, escaped quotes, and line breaks", () => {
+  const start = source.indexOf("function parseCSV(text){");
+  const end = source.indexOf("\nfunction avg(a){", start);
+  assert.ok(start >= 0 && end > start, "CSV parser must exist in production source");
+  const parserSource = source.slice(start, end);
+  const sandbox = {};
+  vm.runInNewContext(parserSource + "\nglobalThis.parseCSV = parseCSV;", sandbox);
+  assert.deepEqual(JSON.parse(JSON.stringify(sandbox.parseCSV('Subject,Mark,Coefficient,Semester\r\n"Math, Algebra",12,2,Semester 1\r\n"Say ""hello""",,1,Semester 2'))), [
+    ["Subject", "Mark", "Coefficient", "Semester"],
+    ["Math, Algebra", "12", "2", "Semester 1"],
+    ['Say "hello"', "", "1", "Semester 2"]
+  ]);
+});
+
+test("CSV import is enabled and maps the exported four-column format", () => {
+  const html = fs.readFileSync("student-workspace.html", "utf8");
+  assert.match(html, /accept="\.json,\.csv,application\/json,text\/csv"/);
+  assert.match(source, /rows\.slice\(1\).*map\(r=>\(\{name:String\(r\[0\]\?\?""\),mark:String\(r\[1\]\?\?""\),coefficient:String\(r\[2\]\|\|"1"\),semester:\/2\\s\*\$\/\.test/);
+});
