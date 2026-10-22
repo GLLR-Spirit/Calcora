@@ -11,7 +11,7 @@ assert.ok(numDeclaration, "The production numeric parser must remain discoverabl
 assert.ok(avgStart >= 0 && avgEnd > avgStart, "The production average function must remain discoverable");
 const averageSource = source.slice(avgStart, avgEnd);
 const sandbox = {};
-vm.runInNewContext(numDeclaration + "\n" + "globalThis.getPriority = items => { " + expression + " return graded; };" , sandbox);
+vm.runInNewContext(numDeclaration + "\n" + averageSource + "\nglobalThis.calculateAverage = avg;", sandbox);
 const average = (subjects) => sandbox.calculateAverage(subjects);
 
 test("calculates a coefficient-weighted average", () => {
@@ -246,4 +246,27 @@ test("review dashboard selects the three lowest valid graded subjects and ignore
 test("snapshot creation stores overall and semester averages from the captured subjects", () => {
   assert.match(source, /average:avg\(copy\),sem1:avg\(copy\.filter\(x=>x\.semester===\"1\"\)\),sem2:avg\(copy\.filter\(x=>x\.semester===\"2\"\)\)/);
   assert.match(source, /subjects:copy,average:avg\(copy\),sem1:avg\(copy\.filter\(x=>x\.semester===\"1\"\)\),sem2:avg\(copy\.filter\(x=>x\.semester===\"2\"\)\)/);
+});
+
+
+test("student workspace calculates semester averages independently using weighted-average logic", () => {
+  const subjects = [
+    { mark: "10", coefficient: "1", semester: "1" },
+    { mark: "16", coefficient: "3", semester: "1" },
+    { mark: "8", coefficient: "2", semester: "2" },
+    { mark: "", coefficient: "5", semester: "2" }
+  ];
+  assert.equal(average(subjects.filter(x => x.semester === "1")), 14.5);
+  assert.equal(average(subjects.filter(x => x.semester === "2")), 8);
+  assert.equal(average(subjects.filter(x => x.semester === "3")), null);
+});
+
+test("review dashboard sorts valid graded subjects by ascending mark and limits the list to three", () => {
+  assert.match(source, /const graded=items\.filter\(x=>x\.name\.trim\(\).*?\.sort\(\(a,b\)=>num\(a\.mark\)-num\(b\.mark\)\)\.slice\(0,3\)/);
+  assert.match(source, /Number\.isFinite\(num\(x\.mark\)\)&&num\(x\.mark\)>=0&&num\(x\.mark\)<=20/);
+  assert.match(source, /Number\.isFinite\(num\(x\.coefficient\)\)&&num\(x\.coefficient\)>0/);
+});
+
+test("snapshot creation stores overall and semester averages from the captured subjects", () => {
+  assert.match(source, /subjects:copy,average:avg\(copy\),sem1:avg\(copy\.filter\(x=>x\.semester==="1"\)\),sem2:avg\(copy\.filter\(x=>x\.semester==="2"\)\)/);
 });
