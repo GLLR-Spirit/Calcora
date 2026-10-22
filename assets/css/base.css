@@ -274,3 +274,6 @@ footer a{white-space:nowrap}
 @media(prefers-reduced-motion:reduce){
   .page > .result:not([hidden]){animation:none}
 }
+
+/* Measurement calculators */
+.measurement-page{max-width:850px}.measure-panel{margin:24px 0;padding:20px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}.measure-panel h2{margin-top:0}.measure-hint{color:var(--muted);font-size:.92rem}.measurement-page .result{overflow-wrap:anywhere}.measurement-page nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
