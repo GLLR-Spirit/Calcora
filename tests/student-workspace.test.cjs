@@ -245,7 +245,7 @@ test("student backup validators reject malformed records before import", () => {
   assert.equal(sandbox.validSubject({name:"x".repeat(121),mark:"10",coefficient:"1"}), false);
   assert.equal(sandbox.validSnapshot({label:"Semester 1",timestamp:1,subjects:[{name:"Math",mark:"10",coefficient:"1"}]}), true);
   assert.equal(sandbox.validSnapshot({label:"Semester 1",timestamp:1,subjects:[{name:"Math",mark:"30",coefficient:"1"}]}), false);
-  assert.match(source, /f\\.size>2\\*1024\\*1024/);
+  assert.match(source, /f\.size>2\*1024\*1024/);
 });
 
 test("university backup validator rejects invalid modules and oversized values", () => {
@@ -258,6 +258,6 @@ test("university backup validator rejects invalid modules and oversized values",
   assert.equal(sandbox.validModule({name:"Algorithms",mark:"21",moduleCoeff:"1",ueCoeff:"1"}), false);
   assert.equal(sandbox.validModule({name:"Algorithms",mark:"10",moduleCoeff:"0",ueCoeff:"1"}), false);
   assert.equal(sandbox.validModule({name:"x".repeat(121),mark:"10",moduleCoeff:"1",ueCoeff:"1"}), false);
-  assert.match(plannerSource, /file\\.size>2\\*1024\\*1024/);
-  assert.match(plannerSource, /x\\.modules\\.length>500/);
+  assert.match(plannerSource, /file\.size>2\*1024\*1024/);
+  assert.match(plannerSource, /x\.modules\.length>500/);
 });
