@@ -29,11 +29,12 @@ jobs:
           node --check assets/js/lmd-calculator.js
           node --check assets/js/student-workspace.js
           node --check assets/js/university-planner.js
+          node --check assets/js/study-planner.js
           node --check locales/en.js
           node --check locales/fr.js
           node --check locales/ar.js
-      - name: Run student workspace regression tests
-        run: node --test tests/student-workspace.test.cjs
+      - name: Run regression tests
+        run: node --test tests/*.test.cjs
       - uses: actions/configure-pages@v5
         with:
           enablement: true

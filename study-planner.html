@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Plan revision sessions, track study time and prioritize upcoming exams with Calcora's free offline study planner.">
+<link rel="canonical" href="https://gllr-spirit.github.io/Calcora/study-planner.html">
+<title>Study planner — Calcora</title>
+<link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/theme-light.css" id="theme-stylesheet"><link rel="stylesheet" href="assets/css/study-planner.css">
+<script defer src="assets/js/study-planner.js"></script>
+</head>
+<body>
+<header><a class="brand" href="index.html">◉ Calcora</a><nav><select id="language-select" aria-label="Language"><option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option></select> <button id="theme-toggle" type="button" aria-label="Toggle theme">☾</button></nav></header>
+<main class="page study-planner">
+<p><a href="index.html" data-t="home">Home</a> / <span data-t="title">Study planner</span></p>
+<section class="study-hero"><p class="study-kicker">CALCORA • STUDENT TOOLS</p><h1 data-t="title">Study planner</h1><p data-t="intro">Organize exam dates, prioritize subjects and track every revision session.</p><div class="study-stats"><article class="student-stat"><span data-t="activeTasks">Active plans</span><strong id="active-count">0</strong></article><article class="student-stat"><span data-t="plannedTime">Planned time</span><strong id="planned-time">0 h</strong></article><article class="student-stat"><span data-t="studiedTime">Time studied</span><strong id="studied-time">0 min</strong></article><article class="student-stat"><span data-t="completed">Completed</span><strong id="completed-count">0</strong></article></div></section>
+<section><h2 data-t="create">Add a revision plan</h2><form id="study-form" class="study-form">
+<label class="field"><span data-t="subject">Subject</span><input id="task-subject" name="subject" maxlength="100" required placeholder="e.g. Algorithms"></label>
+<div class="row"><label class="field"><span data-t="examDate">Exam date</span><input id="task-date" name="examDate" type="date" required></label><label class="field"><span data-t="priority">Priority</span><select id="task-priority" name="priority"><option value="high" data-t="high">High</option><option value="medium" selected data-t="medium">Medium</option><option value="low" data-t="low">Low</option></select></label></div>
+<div class="row"><label class="field"><span data-t="plannedMinutes">Planned minutes</span><input id="task-minutes" name="plannedMinutes" type="number" min="5" max="10000" step="5" value="120" required></label><label class="field"><span data-t="topic">Chapter / topic (optional)</span><input id="task-topic" name="topic" maxlength="160" placeholder="e.g. Recursion"></label></div>
+<label class="field"><span data-t="notes">Notes (optional)</span><textarea id="task-notes" name="notes" rows="2" maxlength="500"></textarea></label>
+<button class="primary" type="submit" data-t="addPlan">Add plan</button><p id="form-status" class="student-help" role="status"></p>
+</form></section>
+<section><div class="student-section-heading"><h2 data-t="yourPlans">Your revision plans</h2><div class="student-actions"><select id="plan-filter" aria-label="Filter plans"><option value="all" data-t="allPlans">All plans</option><option value="active" data-t="activeOnly">Active</option><option value="done" data-t="completedOnly">Completed</option><option value="overdue" data-t="overdueOnly">Overdue</option></select><button id="export-plans" type="button" data-t="export">Export backup</button><label class="student-import"><span data-t="import">Import backup</span><input id="import-plans" type="file" accept="application/json,.json"></label></div></div><p class="student-help" data-t="localNotice">Your plans are saved only in this browser. Export a backup before changing devices or clearing browser data.</p><div id="plan-list" class="study-plan-list" aria-live="polite"></div><p id="planner-status" class="student-help" role="status"></p></section>
+<section class="study-tips"><h2 data-t="routine">A simple revision routine</h2><ul><li data-t="tip1">Break a large subject into small, specific topics.</li><li data-t="tip2">Schedule shorter sessions and take regular breaks.</li><li data-t="tip3">After each session, record what you studied and what still needs work.</li></ul></section>
+</main><footer><span>© <span id="year"></span> Calcora</span><span><a href="student-workspace.html" data-t="workspace">Student workspace</a> · <a href="pages/privacy.html" data-t="privacy">Privacy</a></span></footer>
+</body></html>
