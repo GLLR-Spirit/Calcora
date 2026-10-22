@@ -127,3 +127,64 @@ test("subject forecast formula handles remaining ungraded coefficient", () => {
   assert.equal(calculate(12, 2, 3, 12), 16);
   assert.equal(calculate(12, 2, 3, 24), 12);
 });
+
+
+test("target simulator identifies an already-achieved goal and impossible targets", () => {
+  const need = (current, goal, done, remaining) => (goal * 100 - current * done) / remaining;
+  assert.ok(need(15, 12, 60, 40) <= 0);
+  assert.ok(need(18, 19, 80, 20) > 20);
+  assert.equal(need(10, 12, 50, 50), 14);
+  assert.match(source, /need<=0\?t\("already"\):need>20\?t\("impossible"\)/);
+});
+
+test("subject forecast rejects invalid goals and handles no remaining subjects", () => {
+  assert.match(source, /goal<0\|\|goal>20/);
+  assert.match(source, /remainingWeight<=0/);
+  assert.match(source, /forecastNoRemaining/);
+  assert.match(source, /forecastImpossible/);
+});
+
+test("complete JSON backup includes a version, goal, subjects and bounded history", () => {
+  assert.match(source, /format:"calcora-student-workspace",version:2/);
+  assert.match(source, /forecastGoal:\$\("#forecast-goal"\)\.value/);
+  assert.match(source, /subjects:items,history:history\.slice\(-40\)/);
+  assert.match(source, /d\.format==="calcora-student-workspace"&&Number\(d\.version\)>=2/);
+});
+
+test("import validation rejects too many subjects, invalid marks and invalid coefficients", () => {
+  assert.match(source, /!Array\.isArray\(a\)\|\|a\.length>500/);
+  assert.match(source, /Number\(x\.mark\)<0\|\|Number\(x\.mark\)>20/);
+  assert.match(source, /Number\(x\.coefficient\?\?1\)<=0/);
+  assert.match(source, /if\(!Array\.isArray\(d\.history\)\|\|d\.history\.length>500\)throw Error\("history"\)/);
+});
+
+test("complete backup import asks before replacing existing data and restores history", () => {
+  assert.match(source, /confirm\(t\("fullBackupConfirm"\)\)/);
+  assert.match(source, /items=nextItems;history=nextHistory/);
+  assert.match(source, /localStorage\.setItem\(HKEY,JSON\.stringify\(history\)\)/);
+  assert.match(source, /renderHistory\(\);renderDashboard\(\)/);
+});
+
+test("history restoration regenerates subject IDs and requires confirmation", () => {
+  assert.match(source, /confirm\(t\("restoreConfirm"\)\)/);
+  assert.match(source, /items=s\.subjects\.map\(x=>\(\{\.\.\.x,id:uid\(\)\}\)\)/);
+});
+
+test("university planner flags invalid marks and non-positive coefficients", () => {
+  plannerSandbox.state.modules = [
+    { semester: "1", ue: "Bad", mark: "21", moduleCoeff: "1", ueCoeff: "1" },
+    { semester: "1", ue: "Bad", mark: "10", moduleCoeff: "0", ueCoeff: "1" }
+  ];
+  const result = plannerSandbox.getUnitResults("1");
+  assert.equal(result[0].invalid, true);
+  assert.equal(result[0].average, null);
+});
+
+test("student workspace provides Arabic RTL and the search/filter controls", () => {
+  const html = fs.readFileSync("student-workspace.html", "utf8");
+  assert.match(source, /ar:\{/);
+  assert.match(source, /document\.documentElement\.dir=lang==="ar"\?"rtl":"ltr"/);
+  assert.match(html, /id="language-select"/);
+  assert.match(html, /id="subject-search"/);
+  assert.match(html, /id="semester-filter"/);
+});
