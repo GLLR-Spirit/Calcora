@@ -85,3 +85,14 @@ test("LMD calculator starts without invented marks and supports bounded validate
   assert.doesNotMatch(js, /add\(\{name:"Algorithmique",ue:"UE Fondamentale",semester:"S1",cc:"12",exam:"14"\}\)/);
   assert.match(js, /localStorage\.getItem\(STORAGE_KEY\)/);
 });
+
+
+test("LMD calculator supports configurable pass threshold and ECTS credits", () => {
+  const html = fs.readFileSync("education-levels/university/lmd-calculator.html", "utf8");
+  const js = fs.readFileSync("assets/js/lmd-calculator.js", "utf8");
+  assert.match(html, /id="pass-mark"/);
+  assert.match(js, /ue-credits/);
+  assert.match(js, /u\.earned=u\.average!==null&&u\.average>=passMark\?u\.credits:0/);
+  assert.match(js, /Number\(m\.credits\?\?0\)>=0/);
+  assert.match(js, /creditConflict/);
+});
