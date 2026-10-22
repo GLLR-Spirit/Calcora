@@ -11,7 +11,7 @@ assert.ok(numDeclaration, "The production numeric parser must remain discoverabl
 assert.ok(avgStart >= 0 && avgEnd > avgStart, "The production average function must remain discoverable");
 const averageSource = source.slice(avgStart, avgEnd);
 const sandbox = {};
-vm.runInNewContext(numDeclaration + "\n" + averageSource + "\nglobalThis.calculateAverage = avg;", sandbox);
+vm.runInNewContext(numDeclaration + "\n" + "globalThis.getPriority = items => { " + expression + " return graded; };" , sandbox);
 const average = (subjects) => sandbox.calculateAverage(subjects);
 
 test("calculates a coefficient-weighted average", () => {
