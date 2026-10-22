@@ -209,3 +209,41 @@ test("CSV import is enabled and maps the exported four-column format", () => {
   assert.match(html, /accept="\.json,\.csv,application\/json,text\/csv"/);
   assert.match(source, /rows\.slice\(1\).*map\(r=>\(\{name:String\(r\[0\]\?\?""\),mark:String\(r\[1\]\?\?""\),coefficient:String\(r\[2\]\|\|"1"\),semester:\/2\\s\*\$\/\.test/);
 });
+
+
+test("student workspace calculates semester averages independently using real weighted-average logic", () => {
+  const subjects = [
+    { mark: "10", coefficient: "1", semester: "1" },
+    { mark: "16", coefficient: "3", semester: "1" },
+    { mark: "8", coefficient: "2", semester: "2" },
+    { mark: "", coefficient: "5", semester: "2" }
+  ];
+  assert.equal(average(subjects.filter(x => x.semester === "1")), 14.5);
+  assert.equal(average(subjects.filter(x => x.semester === "2")), 8);
+  assert.equal(average(subjects.filter(x => x.semester === "3")), null);
+});
+
+test("review dashboard selects the three lowest valid graded subjects and ignores invalid rows", () => {
+  const start = source.indexOf("const graded=items.filter(");
+  const end = source.indexOf(";const list=document.createElement", start);
+  assert.ok(start >= 0 && end > start, "Dashboard review-selection expression must remain discoverable");
+  const expression = source.slice(start, end + 1);
+  const sandbox = {};
+  vm.runInNewContext(numDeclaration + "\\n" + expression + "\\nglobalThis.getPriority = items => { " + expression + " return graded; };", sandbox);
+  const selected = sandbox.getPriority([
+    { name: "Strong", mark: "18", coefficient: "1", semester: "1" },
+    { name: "Weak A", mark: "5", coefficient: "1", semester: "1" },
+    { name: "Weak B", mark: "7", coefficient: "2", semester: "2" },
+    { name: "Weak C", mark: "9", coefficient: "1", semester: "2" },
+    { name: "Weak D", mark: "11", coefficient: "1", semester: "1" },
+    { name: "Invalid mark", mark: "25", coefficient: "1", semester: "1" },
+    { name: "Invalid coefficient", mark: "2", coefficient: "0", semester: "1" },
+    { name: "Unnamed", mark: "1", coefficient: "1", semester: "1" }
+  ]);
+  assert.deepEqual(JSON.parse(JSON.stringify(selected.map(x => x.name))), ["Weak A", "Weak B", "Weak C"]);
+});
+
+test("snapshot creation stores overall and semester averages from the captured subjects", () => {
+  assert.match(source, /average:avg\(copy\),sem1:avg\(copy\.filter\(x=>x\.semester===\"1\"\)\),sem2:avg\(copy\.filter\(x=>x\.semester===\"2\"\)\)/);
+  assert.match(source, /subjects:copy,average:avg\(copy\),sem1:avg\(copy\.filter\(x=>x\.semester===\"1\"\)\),sem2:avg\(copy\.filter\(x=>x\.semester===\"2\"\)\)/);
+});
