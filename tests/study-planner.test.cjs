@@ -55,3 +55,27 @@ test("homepage links to the revision planner and deployment checks include its t
 
 test("suggests revision priorities from marks and treats ungraded subjects as high priority",()=>{assert.equal(planner.suggestedPriority(""),"high");assert.equal(planner.suggestedPriority(null),"high");assert.equal(planner.suggestedPriority(9.99),"high");assert.equal(planner.suggestedPriority(10),"medium");assert.equal(planner.suggestedPriority(11.99),"medium");assert.equal(planner.suggestedPriority(12),"low")});
 test("revision planner reads shared workspace key and exposes integration UI",()=>{const fs=require("node:fs");const script=fs.readFileSync("assets/js/study-planner.js","utf8");const html=fs.readFileSync("study-planner.html","utf8");const workspace=fs.readFileSync("student-workspace.html","utf8");assert.match(script,/calcora-student-workspace-v1/);assert.match(script,/renderWorkspaceSubjects/);assert.match(html,/id="workspace-subjects"/);assert.match(workspace,/href="study-planner\.html"/)});
+
+test("weekly schedule stays within daily limits and prioritizes urgent high-priority plans",()=>{
+ const plans=[
+  planner.normalizePlan({id:"late-low",subject:"Optional reading",examDate:"2026-10-27",priority:"low",plannedMinutes:120}),
+  planner.normalizePlan({id:"urgent-high",subject:"Algorithms",examDate:"2026-10-23",priority:"high",plannedMinutes:120}),
+  planner.normalizePlan({id:"later-medium",subject:"Statistics",examDate:"2026-10-28",priority:"medium",plannedMinutes:120})
+ ];
+ const result=planner.buildWeeklySchedule(plans,"2026-10-22",60);assert.ok(result);assert.equal(result.days.length,7);
+ for(const day of result.days){assert.ok(day.totalMinutes<=60);assert.equal(day.totalMinutes,day.items.reduce((sum,x)=>sum+x.minutes,0))}
+ assert.equal(result.days[0].items[0].subject,"Algorithms");
+});
+test("weekly schedule handles empty plans and rejects invalid daily targets",()=>{
+ assert.equal(planner.buildWeeklySchedule([],"2026-10-22",90).unscheduledMinutes,0);
+ assert.equal(planner.buildWeeklySchedule([],"2026-10-22",14),null);
+ assert.equal(planner.buildWeeklySchedule([],"2026-10-22",601),null);
+});
+test("weekly schedule excludes completed and already overdue plans and reports unallocated workload",()=>{
+ const result=planner.buildWeeklySchedule([
+  planner.normalizePlan({id:"done",subject:"Done",examDate:"2026-10-25",plannedMinutes:90,completed:true}),
+  planner.normalizePlan({id:"past",subject:"Past",examDate:"2026-10-20",plannedMinutes:90}),
+  planner.normalizePlan({id:"future",subject:"Future",examDate:"2026-10-28",plannedMinutes:1000})
+ ],"2026-10-22",30);
+ assert.equal(result.unscheduledMinutes,790);assert.ok(result.days.every(d=>d.items.every(x=>x.subject==="Future")));
+});
