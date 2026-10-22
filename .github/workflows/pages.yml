@@ -32,6 +32,8 @@ jobs:
           node --check locales/en.js
           node --check locales/fr.js
           node --check locales/ar.js
+      - name: Run student workspace regression tests
+        run: node --test tests/student-workspace.test.cjs
       - uses: actions/configure-pages@v5
         with:
           enablement: true
