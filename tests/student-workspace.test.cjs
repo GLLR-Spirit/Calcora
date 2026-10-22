@@ -261,3 +261,18 @@ test("university backup validator rejects invalid modules and oversized values",
   assert.match(plannerSource, /file\.size>2\*1024\*1024/);
   assert.match(plannerSource, /x\.modules\.length>500/);
 });
+
+
+test("university backup import confirms replacement in all supported languages", () => {
+  assert.match(plannerSource, /if\(!confirm\(t\("importConfirm"\)\)\)return;state=nextState/);
+  assert.match(plannerSource, /importConfirm:"Importer cette sauvegarde remplacera le parcours actuel\. Continuer \?"/);
+  assert.match(plannerSource, /importConfirm:"Importing this backup will replace the current program\. Continue\?"/);
+  assert.match(plannerSource, /importConfirm:"سيؤدي استيراد هذه النسخة إلى استبدال المسار الحالي\. هل تريد المتابعة؟"/);
+});
+
+test("student backup import validates full history before asking to replace data", () => {
+  const validation = source.indexOf("d.history.every(validImportedSnapshot)");
+  const confirmation = source.indexOf('confirm(t("fullBackupConfirm"))');
+  const mutation = source.indexOf("items=nextItems;history=nextHistory");
+  assert.ok(validation >= 0 && confirmation > validation && mutation > confirmation);
+});
