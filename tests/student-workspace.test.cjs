@@ -264,7 +264,7 @@ test("university backup validator rejects invalid modules and oversized values",
 
 
 test("university backup import confirms replacement in all supported languages", () => {
-  assert.match(plannerSource, /if\(!confirm\(t\("importConfirm"\)\)\)return;state=nextState/);
+  assert.match(plannerSource, /if\(!confirm\(t\("importConfirm"\)\)\)\{e\.target\.value="";return\}state=nextState/);
   assert.match(plannerSource, /importConfirm:"Importer cette sauvegarde remplacera le parcours actuel\. Continuer \?"/);
   assert.match(plannerSource, /importConfirm:"Importing this backup will replace the current program\. Continue\?"/);
   assert.match(plannerSource, /importConfirm:"سيؤدي استيراد هذه النسخة إلى استبدال المسار الحالي\. هل تريد المتابعة؟"/);
