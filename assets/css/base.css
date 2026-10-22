@@ -110,3 +110,22 @@ footer a{white-space:nowrap}
   .card{padding:20px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+
+
+/* Homepage: clearer actions, editorial section headings and trust cues */
+.hero-actions{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;margin:24px auto 0}
+.hero-cta,.hero-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 18px;border-radius:12px;font-weight:750}
+.hero-cta{box-shadow:0 8px 20px color-mix(in srgb,var(--accent) 22%,transparent)}
+.hero-secondary{border:1px solid var(--border);background:var(--surface);color:var(--text)}
+.hero-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.hero-trust{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 22px;margin:24px auto 0;color:var(--muted);font-size:.86rem}
+.hero-trust span{display:inline-flex;align-items:center;gap:7px}
+.hero-trust span:before{content:"✓";display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:800;font-size:.75rem}
+.home-section-heading{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-top:12px}
+.home-section-heading h2{margin:0 0 16px}
+.section-eyebrow{margin:0 0 5px;color:var(--accent);font-size:.72rem;font-weight:850;letter-spacing:.15em}
+.section-link{margin-bottom:18px;font-size:.92rem;font-weight:700;color:var(--accent);white-space:nowrap}
+.category-heading{margin-top:48px}
+.category-grid .card{min-height:84px;display:flex;align-items:center;gap:12px;font-weight:700}
+.home-notice{margin-top:36px!important}
+@media(max-width:600px){.home-section-heading{align-items:flex-start}.section-link{font-size:.82rem;margin-top:8px}.hero-trust{gap:8px 14px}.hero-trust span{font-size:.8rem}}
