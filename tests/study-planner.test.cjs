@@ -132,3 +132,10 @@ test("changes from another browser tab refresh the shared student data and prefe
     assert.ok(/e\.key==="calcora-theme"/.test(script) || /e\.key===THEME_KEY/.test(script));
   }
 });
+
+
+test("study planner rejects oversized backup files before parsing JSON", () => {
+  const fs = require("node:fs");
+  const script = fs.readFileSync("assets/js/study-planner.js", "utf8");
+  assert.match(script, /file\\.size>2\\*1024\\*1024/);
+});
