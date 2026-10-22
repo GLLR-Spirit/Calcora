@@ -154,8 +154,8 @@ test("complete JSON backup includes a version, goal, subjects and bounded histor
 test("import validation rejects too many subjects, invalid marks and invalid coefficients", () => {
   assert.match(source, /!Array\.isArray\(a\)\|\|a\.length>500/);
   assert.match(source, /Number\.isFinite\(Number\(x\.mark\)\)&&Number\(x\.mark\)>=0&&Number\(x\.mark\)<=20/);
-  assert.match(source, /Number\(x\.coefficient\?\?1\)<=0/);
-  assert.match(source, /if\(!Array\.isArray\(d\.history\)\|\|d\.history\.length>500\)throw Error\("history"\)/);
+  assert.match(source, /Number\.isFinite\(Number\(x\.coefficient\?\?1\)\)&&Number\(x\.coefficient\?\?1\)>0/);
+  assert.match(source, /d\.history\.every\(validImportedSnapshot\)/);
 });
 
 test("complete backup import asks before replacing existing data and restores history", () => {
@@ -231,4 +231,33 @@ test("review dashboard sorts valid graded subjects by ascending mark and limits 
 
 test("snapshot creation stores overall and semester averages from the captured subjects", () => {
   assert.match(source, /subjects:copy,average:avg\(copy\),sem1:avg\(copy\.filter\(x=>x\.semester==="1"\)\),sem2:avg\(copy\.filter\(x=>x\.semester==="2"\)\)/);
+});
+
+test("student backup validators reject malformed records before import", () => {
+  const start = source.indexOf("function validImportedSubject(x){");
+  const end = source.indexOf("\\nfunction esc(v){", start);
+  assert.ok(start >= 0 && end > start);
+  const sandbox = {};
+  vm.runInNewContext(source.slice(start, end) + "\\nglobalThis.validSubject=validImportedSubject;globalThis.validSnapshot=validImportedSnapshot;", sandbox);
+  assert.equal(sandbox.validSubject({name:"Math",mark:"0",coefficient:"1",semester:"1"}), true);
+  assert.equal(sandbox.validSubject({name:"Math",mark:"21",coefficient:"1"}), false);
+  assert.equal(sandbox.validSubject({name:"Math",mark:"10",coefficient:"0"}), false);
+  assert.equal(sandbox.validSubject({name:"x".repeat(121),mark:"10",coefficient:"1"}), false);
+  assert.equal(sandbox.validSnapshot({label:"Semester 1",timestamp:1,subjects:[{name:"Math",mark:"10",coefficient:"1"}]}), true);
+  assert.equal(sandbox.validSnapshot({label:"Semester 1",timestamp:1,subjects:[{name:"Math",mark:"30",coefficient:"1"}]}), false);
+  assert.match(source, /f\\.size>2\\*1024\\*1024/);
+});
+
+test("university backup validator rejects invalid modules and oversized values", () => {
+  const start = plannerSource.indexOf("function validImportedModule(m){");
+  const end = plannerSource.indexOf("\\nfunction f(v){", start);
+  assert.ok(start >= 0 && end > start);
+  const sandbox = {};
+  vm.runInNewContext(plannerSource.slice(start, end) + "\\nglobalThis.validModule=validImportedModule;", sandbox);
+  assert.equal(sandbox.validModule({name:"Algorithms",ue:"Math",mark:"10",moduleCoeff:"2",ueCoeff:"1",semester:"1"}), true);
+  assert.equal(sandbox.validModule({name:"Algorithms",mark:"21",moduleCoeff:"1",ueCoeff:"1"}), false);
+  assert.equal(sandbox.validModule({name:"Algorithms",mark:"10",moduleCoeff:"0",ueCoeff:"1"}), false);
+  assert.equal(sandbox.validModule({name:"x".repeat(121),mark:"10",moduleCoeff:"1",ueCoeff:"1"}), false);
+  assert.match(plannerSource, /file\\.size>2\\*1024\\*1024/);
+  assert.match(plannerSource, /x\\.modules\\.length>500/);
 });
