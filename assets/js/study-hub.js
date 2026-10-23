@@ -1,5 +1,9 @@
 (()=>{"use strict";
 const $=id=>document.getElementById(id),KEY="calcora-study-hub-v1",DAY=86400000;
+const calculateRequiredMark=(c,w,t)=>(t-c*w/100)/(1-w/100);
+const makeRecallPrompts=topic=>["Explain "+topic,"Give an example of "+topic];
+const dueCardStats=(cards,now=Date.now())=>{const valid=Array.isArray(cards)?cards.filter(c=>c&&typeof c.q==="string"&&typeof c.a==="string"):[];const due=valid.filter(c=>!Number.isFinite(Number(c.dueAt))||Number(c.dueAt)<=now);const future=valid.map(c=>Number(c.dueAt)).filter(n=>Number.isFinite(n)&&n>now).sort((a,b)=>a-b);return {total:valid.length,due:due.length,nextDue:future.length?future[0]:null};};
+if(typeof document==="undefined"){if(typeof module!=="undefined"&&module.exports)module.exports={calculateRequiredMark,makeRecallPrompts,dueCardStats};return;}
 const tools=[
 {id:"goal",n:1,title:"Daily study goal",desc:"Set a target and see your progress from logged sessions.",fields:[["minutes","Target minutes","number",60]],kind:"goal"},
 {id:"tasks",n:2,title:"Daily task checklist",desc:"Capture small actions and tick them off as you finish.",fields:[["text","Task","text"]],kind:"tasks"},
@@ -25,7 +29,7 @@ const tools=[
 {id:"search",n:22,title:"Find anything in your study hub",desc:"Search saved notes, formulas, terms, mistakes and topics.",fields:[["query","Search your saved entries","search"]],kind:"search"}
 ];
 const blank=()=>({goal:60,items:{},logs:[],streak:0,lastDay:"",readiness:{},focusSeconds:1500,breakSeconds:300});
-if(typeof document==="undefined"){if(typeof module!=="undefined"&&module.exports)module.exports={calculateRequiredMark:(c,w,t)=>(t-c*w/100)/(1-w/100),makeRecallPrompts:topic=>["Explain "+topic,"Give an example of "+topic]};return;}
+if(typeof document==="undefined"){return;}
 let data;try{data={...blank(),...JSON.parse(localStorage.getItem(KEY)||"{}")};}catch{data=blank()}data.items=data.items||{};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
