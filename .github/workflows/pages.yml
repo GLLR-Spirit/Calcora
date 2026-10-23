@@ -18,11 +18,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - name: Validate JavaScript syntax
         run: |
           find assets/js components locales settings -type f -name '*.js' -print0 | xargs -0 -n1 node --check
       - name: Run regression tests
         run: node --test tests/*.test.cjs
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
       - uses: actions/configure-pages@v5
         with:
           enablement: true
@@ -31,3 +38,7 @@ jobs:
           path: .
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Test published pages and key interactions in Chromium
+        env:
+          SITE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: node tests/browser-smoke.cjs
