@@ -25,6 +25,7 @@ const tools=[
 {id:"search",n:22,title:"Find anything in your study hub",desc:"Search saved notes, formulas, terms, mistakes and topics.",fields:[["query","Search your saved entries","search"]],kind:"search"}
 ];
 const blank=()=>({goal:60,items:{},logs:[],streak:0,lastDay:"",readiness:{},focusSeconds:1500,breakSeconds:300});
+if(typeof document==="undefined"){if(typeof module!=="undefined"&&module.exports)module.exports={calculateRequiredMark:(c,w,t)=>(t-c*w/100)/(1-w/100),makeRecallPrompts:topic=>["Explain "+topic,"Give an example of "+topic]};return;}
 let data;try{data={...blank(),...JSON.parse(localStorage.getItem(KEY)||"{}")};}catch{data=blank()}data.items=data.items||{};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
