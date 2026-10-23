@@ -58,5 +58,6 @@ function attach(formId,resultId,kind){
   const list=document.createElement("ol");steps.forEach(text=>{const li=document.createElement("li");li.textContent=text;list.append(li)});panel.append(list);
  });
 }
+if(typeof document==="undefined")return;
 attach("area-form","area-result","area");attach("volume-form","volume-result","volume");attach("speed-form","speed-result","speed");attach("acceleration-form","acceleration-result","acceleration");
 })();
