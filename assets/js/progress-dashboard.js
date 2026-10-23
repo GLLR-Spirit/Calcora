@@ -3,7 +3,7 @@ const HUB_KEY="calcora-study-hub-v1",REV_KEY="calcora_revision_cards_v1",DAY=864
 const $=id=>document.getElementById(id);
 const safeRead=(key,fallback)=>{try{const v=JSON.parse(localStorage.getItem(key)||"null");return v===null?fallback:v}catch{return fallback}};
 const dateKey=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-const validDate=s=>typeof s==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&Number.isFinite(new Date(s+"T12:00:00").getTime());
+const validDate=s=>{if(typeof s!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;const [y,m,d]=s.split("-").map(Number);const date=new Date(y,m-1,d);return date.getFullYear()===y&&date.getMonth()===m-1&&date.getDate()===d;};
 const cleanArray=v=>Array.isArray(v)?v.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)):[];
 const getWeeklyReport=(raw,now=new Date())=>{
  const data=raw&&typeof raw==="object"&&!Array.isArray(raw)?raw:{};
