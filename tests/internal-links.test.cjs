@@ -157,3 +157,29 @@ test("revision quiz results retain per-subject scores for targeted recommendatio
   assert.match(dashboard, /quizBySubject\.get\(row\.name\.toLocaleLowerCase\(\)\)/);
   assert.match(dashboard, /\.sort\(\(a,b\)=>b\.priority-a\.priority/);
 });
+
+
+test("sitemap lists every HTML page and points only to existing published targets", () => {
+  const sitemap = fs.readFileSync("sitemap.xml", "utf8");
+  const base = "https://gllr-spirit.github.io/Calcora/";
+  const urls = [...sitemap.matchAll(/<loc>(.*?)<\\/loc>/g)].map((match) => match[1]);
+  assert.ok(urls.length > 0, "Sitemap must contain URLs");
+  const publishedPaths = new Set(urls.map((url) => {
+    assert.ok(url.startsWith(base), "Sitemap URL must use the current GitHub Pages base");
+    return decodeURIComponent(url.slice(base.length));
+  }));
+  for (const htmlFile of listHtmlFiles(root)) {
+    const relative = path.relative(root, htmlFile).replace(/\\\\/g, "/");
+    const expected = relative.endsWith("/index.html") || relative === "index.html"
+      ? relative === "index.html" ? "" : relative.slice(0, -"/index.html".length) + "/"
+      : relative;
+    assert.ok(publishedPaths.has(expected), "Missing from sitemap: " + relative);
+  }
+  for (const published of publishedPaths) {
+    const normalized = published.replace(/\\/$/, "") || "index.html";
+    const target = path.join(root, normalized);
+    const indexFile = path.join(target, "index.html");
+    assert.ok(fs.existsSync(target) && fs.statSync(target).isFile() || fs.existsSync(indexFile) && fs.statSync(indexFile).isFile(),
+      "Sitemap target does not exist: " + published);
+  }
+});
