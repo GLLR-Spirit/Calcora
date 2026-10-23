@@ -111,13 +111,13 @@ const internalLinks = new Set();
     assert.match(await page.locator("#acceleration-result").innerText(), /5/, "acceleration calculator should return 5 m/s²");
 
     await page.goto(new URL("calculators/math/percentage.html", base).href, { waitUntil: "domcontentloaded" });
-    await page.locator("#pct button[type=submit]").click();
+    await page.locator("#pct button").click();
     assert.match(await page.locator("#pct-result").innerText(), /30/, "15 percent of 200 should be 30");
     await page.goto(new URL("calculators/conversions/units.html", base).href, { waitUntil: "domcontentloaded" });
     await page.locator("#amount").fill("1");
     await page.locator("#from").selectOption("km");
     await page.locator("#to").selectOption("m");
-    await page.locator("#units-form button[type=submit]").click();
+    await page.locator("#units-form button").click();
     assert.match(await page.locator("#units-result").innerText(), /1000/, "one kilometre should convert to 1000 metres");
 
     await page.goto(new URL("education-levels/university/lmd-calculator.html", base).href, { waitUntil: "domcontentloaded" });
