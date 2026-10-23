@@ -21,3 +21,15 @@ test("dashboard handles due cards, future cards and malformed records", () => {
  assert.equal(s.totalCards,3); assert.equal(s.dueCards,2); assert.ok(s.nextDue>new Date("2026-10-23T12:00:00").getTime());
 });
 test("date validation rejects invalid formats",()=>{assert.equal(validDate("2026-10-23"),true);assert.equal(validDate("23/10/2026"),false);assert.equal(validDate("invalid"),false)});
+
+test("weekly report compares current and previous weeks without counting future days", () => {
+ const now=new Date("2026-10-23T12:00:00");
+ const data={goal:30,items:{log:[{date:"2026-10-19",minutes:30},{date:"2026-10-20",minutes:15},{date:"2026-10-12",minutes:45},{date:"2026-10-25",minutes:999}],tasks:[{done:false,text:"Revise"}],topics:[{name:"Pointers",level:2}]}};
+ const r=require("../assets/js/progress-dashboard.js").getWeeklyReport(data,now);
+ assert.equal(r.thisMinutes,45);assert.equal(r.previousMinutes,45);assert.equal(r.activeDays,2);assert.equal(r.goalDays,1);assert.equal(r.elapsedDays,5);
+ assert.ok(r.suggestions.some(s=>s.includes("Pointers")));
+});
+test("weekly report handles empty data and unset goals", () => {
+ const r=require("../assets/js/progress-dashboard.js").getWeeklyReport({},new Date("2026-10-23T12:00:00"));
+ assert.equal(r.thisMinutes,0);assert.equal(r.previousMinutes,0);assert.equal(r.goalDays,0);assert.equal(r.activeDays,0);assert.ok(r.suggestions.length>0);
+});
