@@ -162,7 +162,7 @@ test("revision quiz results retain per-subject scores for targeted recommendatio
 test("sitemap lists every HTML page and points only to existing published targets", () => {
   const sitemap = fs.readFileSync("sitemap.xml", "utf8");
   const base = "https://gllr-spirit.github.io/Calcora/";
-  const urls = [...sitemap.matchAll(/<loc>(.*?)<\\/loc>/g)].map((match) => match[1]);
+  const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
   assert.ok(urls.length > 0, "Sitemap must contain URLs");
   const publishedPaths = new Set(urls.map((url) => {
     assert.ok(url.startsWith(base), "Sitemap URL must use the current GitHub Pages base");
