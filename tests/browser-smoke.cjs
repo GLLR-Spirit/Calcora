@@ -118,7 +118,7 @@ const internalLinks = new Set();
     await page.locator("#from").selectOption("km");
     await page.locator("#to").selectOption("m");
     await page.locator("#units-form button").click();
-    assert.match(await page.locator("#units-result").innerText(), /1000/, "one kilometre should convert to 1000 metres");
+    assert.match((await page.locator("#units-result").innerText()).replace(/[\s\u202f]/g, ""), /1000/, "one kilometre should convert to 1000 metres");
 
     await page.goto(new URL("education-levels/university/lmd-calculator.html", base).href, { waitUntil: "domcontentloaded" });
     const moduleRow = page.locator(".module-row").first();
