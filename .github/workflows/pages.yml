@@ -27,6 +27,7 @@ jobs:
           node --check assets/js/science-measurements.js
           node --check assets/js/revision.js
           node --check assets/js/study-hub.js
+          node --check assets/js/progress-dashboard.js
           node --check assets/js/bac-simulator.js
           node --check assets/js/algeria-grades.js
           node --check assets/js/education-profile.js
