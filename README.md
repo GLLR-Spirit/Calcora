@@ -1,21 +1,26 @@
 # Calcora
 
-Multilingual calculators, starting with Algerian school and university needs. English, French and Arabic are planned from the first version.
+Calcora is a free, static web toolkit for school, university and everyday calculations, with a strong focus on Algerian education and support for English, French and Arabic.
 
-## Structure
-- assets/css: shared layout and separate light/dark themes
-- assets/js: app and calculator logic
-- locales: one file per language
-- settings: language and theme preferences
-- pages: informational pages
-- calculators: grouped by grade, math, science, finance and conversions
-- education-levels: primary, middle school, high school, university and work
-- fields and subjects: degree programs and school subjects
-- components: reusable interface styles and calculator descriptions
-- docs: architecture and roadmap
-- .github/workflows: deployment workflow
+## Student tools
+- Weighted averages and academic grade calculators.
+- Student workspace for subjects, marks, coefficients, semester averages, targets and progress history.
+- University pathway planner and LMD-related tools.
+- Revision planning and an exam countdown planner.
+- Personalized revision suggestions based on upcoming exam dates, selected priorities, and marks saved in the local student workspace.
+- JSON/CSV backups for supported student data.
 
-## Hosting note
-GitHub Pages runs static HTML/CSS/JavaScript. React requires a build step; Node.js, Python, PHP and Ruby backend code and SQL databases require separate compatible hosting. Do not put database credentials in public frontend files.
+## Project structure
+- `assets/css/`: shared styles and light/dark themes.
+- `assets/js/`: application, calculators and student tools.
+- `locales/`: language dictionaries.
+- `settings/` and `pages/`: preferences and informational pages.
+- `calculators/`: grouped calculator pages.
+- `education-levels/`: school, BAC, university and work-related resources.
+- `fields/` and `subjects/`: study fields and subjects.
+- `.github/workflows/`: deployment workflows.
 
-Academic rules vary by institution and year. Configurable formulas and verified sources are required before any rule is labelled official.
+## Technology and hosting
+The project is built with **HTML, CSS and vanilla JavaScript** and can be hosted as a static site on GitHub Pages. It does not require a server or paid API for its local student tools. User-entered student and exam data is stored in the browser on the current device; use the export options before clearing browser data or changing devices.
+
+Academic rules can vary by institution and year. Check each calculator's stated formula and confirm local grading rules before treating a result as official.
