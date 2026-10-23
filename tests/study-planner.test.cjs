@@ -23,6 +23,9 @@ test("validates and normalizes a revision plan", () => {
 test("rejects missing subjects, malformed dates and invalid durations", () => {
   assert.equal(planner.normalizePlan({subject:"",examDate:"2026-11-02",plannedMinutes:60}), null);
   assert.equal(planner.normalizePlan({subject:"Math",examDate:"not-a-date",plannedMinutes:60}), null);
+  assert.equal(planner.normalizePlan({subject:"Math",examDate:"2026-02-31",plannedMinutes:60}), null);
+  assert.equal(planner.normalizePlan({subject:"Math",examDate:"2026-04-31",plannedMinutes:60}), null);
+  assert.equal(planner.normalizePlan({subject:"Math",examDate:"2024-02-29",plannedMinutes:60})?.examDate, "2024-02-29");
   assert.equal(planner.normalizePlan({subject:"Math",examDate:"2026-11-02",plannedMinutes:4}), null);
   assert.equal(planner.normalizePlan({subject:"Math",examDate:"2026-11-02",plannedMinutes:10001}), null);
   assert.equal(planner.normalizePlan({subject:"Math",examDate:"2026-11-02",plannedMinutes:60,studiedMinutes:-1}), null);
