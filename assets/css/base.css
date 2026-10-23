@@ -308,3 +308,36 @@ button:disabled{cursor:not-allowed;opacity:.55;transform:none}
 .student-table tbody tr:focus-within{background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
 @media(hover:none){.card:hover,.study-planner .study-plan:hover,.student-workspace .history-card:hover{transform:none;box-shadow:var(--shadow-soft)}}
 @media(prefers-contrast:more){:root{--border:color-mix(in srgb,var(--text) 35%,var(--bg))}.muted,.student-help,.discovery-meta{color:var(--text)}}
+
+
+/* Calcora home and discovery polish — October 2026 */
+.hero-actions{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin:24px auto 0}
+.hero-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:11px 17px;border-radius:12px;font-weight:750;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+.hero-actions .hero-cta{box-shadow:0 8px 20px color-mix(in srgb,var(--accent) 22%,transparent)}
+.hero-actions .hero-cta:hover{color:#fff;transform:translateY(-2px);box-shadow:0 12px 24px color-mix(in srgb,var(--accent) 28%,transparent)}
+.hero-actions .hero-secondary{border:1px solid var(--border);background:var(--surface);color:var(--text)}
+.hero-actions .hero-secondary:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+.hero-trust{display:flex;justify-content:center;align-items:center;gap:8px 18px;flex-wrap:wrap;margin:22px auto 0;color:var(--muted);font-size:.84rem}
+.hero-trust span{display:inline-flex;align-items:center;gap:7px}
+.hero-trust span:before{content:"✓";display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:850;font-size:.75rem}
+.home-section-heading{display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;margin:34px 0 16px}
+.home-section-heading h2,.wrap .home-section-heading h2{margin:0;font-size:clamp(1.35rem,2.5vw,1.8rem)}
+.home-section-heading .section-eyebrow{margin:0 0 4px;font-size:.72rem;letter-spacing:.14em;font-weight:850;color:var(--accent)}
+.home-section-heading .section-link{font-weight:750;color:var(--accent);font-size:.92rem}
+.home-section-heading .section-link:hover{text-decoration:underline;text-underline-offset:4px}
+.category-heading{margin-top:48px}
+.discovery-tools{padding-inline:0}
+.discovery-toolbar{margin-top:4px}
+.discovery-filter{font-weight:700}
+.discovery-meta{min-height:1.5em}
+.tool-card{min-width:0}
+.tool-card .favorite-toggle{right:10px;top:10px;box-shadow:0 3px 10px rgba(15,23,42,.06)}
+.tool-card .favorite-toggle:hover{transform:translateY(-1px);background:var(--soft)}
+.tool-card>.card{padding-inline-end:56px}
+.tool-card[hidden]{display:none!important}
+.recent-section h2{font-size:1.15rem}
+.category-grid .card{display:flex;align-items:center;gap:12px;min-height:78px;font-weight:700}
+.category-grid .card h3{margin:0}
+.home-notice{margin-top:36px!important}
+@media(max-width:760px){.home-section-heading{align-items:flex-start;margin-top:28px}.hero-trust{gap:8px 12px}.hero-actions{width:100%}.hero-actions a{flex:1 1 210px}}
+@media(prefers-reduced-motion:reduce){.hero-actions a{transition:none}}
