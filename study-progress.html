@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="See your Calcora study progress, upcoming exams, revision cards due, study goals and next priorities in one private local dashboard.">
+<title>Study Progress — Calcora</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/theme-light.css" id="theme-stylesheet">
+<link rel="stylesheet" href="assets/css/progress-dashboard.css">
+<script defer src="assets/js/progress-dashboard.js"></script>
+</head>
+<body>
+<header><a class="brand" href="index.html">◉ Calcora</a><nav><a href="study-hub.html">Study Hub</a> <a href="revision.html">Revision Studio</a> <button id="theme-toggle" type="button" aria-label="Toggle theme">☾</button></nav></header>
+<main class="progress-page">
+<section class="progress-hero">
+<p class="eyebrow">YOUR LEARNING AT A GLANCE</p>
+<h1>Study Progress</h1>
+<p>A single view of your study habits, exam deadlines and next steps. This dashboard reads existing Calcora data stored in this browser; it does not upload your records.</p>
+<div class="dashboard-actions"><a class="primary" href="study-hub.html">Open Study Hub</a><a class="secondary" href="revision.html">Review flashcards</a></div>
+<p id="data-status" class="status" role="status">Reading your saved study data…</p>
+</section>
+<section class="metric-grid" aria-label="Study overview">
+<article class="metric"><span>Study time today</span><strong id="today-minutes">0 min</strong><small id="today-goal">Daily goal not set</small><div class="progress-track"><div id="goal-progress"></div></div></article>
+<article class="metric"><span>This week</span><strong id="week-minutes">0 min</strong><small id="week-sessions">0 study sessions logged</small></article>
+<article class="metric"><span>Tasks completed</span><strong id="tasks-completed">0 / 0</strong><small id="tasks-pending">No pending tasks</small></article>
+<article class="metric"><span>Topic mastery</span><strong id="topics-mastered">0 / 0</strong><small id="topics-weak">Add topics in Study Hub to track confidence</small></article>
+</section>
+<section class="detail-grid">
+<article class="panel"><div class="panel-heading"><div><p class="eyebrow">PLAN AHEAD</p><h2>Upcoming exams</h2></div><a href="study-hub.html#tool-deadline">Manage</a></div><div id="upcoming-exams" class="stack-list"></div></article>
+<article class="panel"><div class="panel-heading"><div><p class="eyebrow">RETRIEVE & REMEMBER</p><h2>Spaced repetition</h2></div><a href="revision.html">Open studio</a></div><div class="flashcard-summary"><strong id="cards-due">0 due</strong><span id="cards-total">0 cards in your deck</span></div><p id="next-review" class="muted"></p><a class="primary action-link" href="revision.html">Start a review →</a></article>
+<article class="panel"><div class="panel-heading"><div><p class="eyebrow">BUILD CONFIDENCE</p><h2>Topics to revisit</h2></div><a href="study-hub.html#tool-topics">Update topics</a></div><div id="topic-list" class="stack-list"></div></article>
+<article class="panel"><div class="panel-heading"><div><p class="eyebrow">NEXT ACTIONS</p><h2>Your priorities</h2></div><a href="study-hub.html">Open tools</a></div><div id="priority-list" class="stack-list"></div></article>
+</section>
+<section class="privacy-note"><strong>Privacy & accuracy</strong><p>Everything is calculated from saved browser data. A new browser or cleared site data may show an empty dashboard. This page does not invent grades or quiz weaknesses; it only summarizes records already saved in Calcora.</p></section>
+</main>
+<footer><span>© <span id="year"></span> Calcora</span><span><a href="pages/privacy.html">Privacy</a> · <a href="pages/faq.html">FAQ</a></span></footer>
+</body>
+</html>
