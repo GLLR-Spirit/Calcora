@@ -14,10 +14,10 @@ const getWeeklyReport=(raw,now=new Date())=>{
  const previousMonday=new Date(monday);previousMonday.setDate(monday.getDate()-7);
  const days=Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);const key=dateKey(d);return {date:key,label:d.toLocaleDateString("en",{weekday:"short"}),minutes:logs.filter(x=>x.date===key).reduce((sum,x)=>sum+Number(x.minutes),0)};});
  const previousMinutes=logs.filter(x=>{const d=new Date(x.date+"T12:00:00");return d>=previousMonday&&d<monday;}).reduce((sum,x)=>sum+Number(x.minutes),0);
- const thisMinutes=days.reduce((sum,d)=>sum+d.minutes,0);
  const goal=Math.max(0,Number(data.goal)||0);
  const elapsedDays=Math.min(7,Math.max(0,Math.floor((today-monday)/DAY)+1));
  const countedDays=days.slice(0,elapsedDays);
+ const thisMinutes=countedDays.reduce((sum,d)=>sum+d.minutes,0);
  const activeDays=countedDays.filter(d=>d.minutes>0).length;
  const goalDays=goal?countedDays.filter(d=>d.minutes>=goal).length:0;
  const pending=cleanArray(items.tasks).filter(x=>!x.done).length;
