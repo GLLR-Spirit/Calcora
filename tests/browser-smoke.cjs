@@ -134,6 +134,31 @@ const internalLinks = new Set();
     await page.locator("#calculate").click();
     assert.match(await page.locator("#results").innerText(), /14,00/, "LMD calculator should compute a module average of 14.00");
 
+    // Confirm study plans and exam dates survive a real page reload.
+    await page.goto(new URL("study-planner.html", base).href, { waitUntil: "domcontentloaded" });
+    await page.locator("#task-subject").fill("Calcora persistence smoke test");
+    await page.locator("#task-date").fill("2099-12-01");
+    await page.locator("#study-form button[type=submit]").click();
+    await page.waitForFunction(() => JSON.parse(localStorage.getItem("calcora-study-planner-v1") || "null")?.plans?.some(p => p.subject === "Calcora persistence smoke test"));
+    await page.reload({ waitUntil: "domcontentloaded" });
+    assert.match(await page.locator("#plan-list").innerText(), /Calcora persistence smoke test/, "saved revision plan should reappear after reload");
+
+    await page.goto(new URL("exam-planner.html", base).href, { waitUntil: "domcontentloaded" });
+    await page.locator("#exam-name").fill("Calcora exam persistence smoke test");
+    await page.locator("#exam-date").fill("2099-12-01");
+    await page.locator("#exam-form button[type=submit]").click();
+    await page.waitForFunction(() => JSON.parse(localStorage.getItem("calcora-exam-countdown-v1") || "[]").some(e => e.name === "Calcora exam persistence smoke test"));
+    await page.reload({ waitUntil: "domcontentloaded" });
+    assert.match(await page.locator("#exam-list").innerText(), /Calcora exam persistence smoke test/, "saved exam should reappear after reload");
+
+    // Check core student pages at a narrow mobile viewport for horizontal overflow.
+    await page.setViewportSize({ width: 390, height: 844 });
+    for (const path of ["index.html", "study-planner.html", "exam-planner.html", "student-workspace.html"]) {
+      await page.goto(new URL(path, base).href, { waitUntil: "domcontentloaded" });
+      const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
+      if (dimensions.content > dimensions.viewport + 2) failures.push(path + " overflows horizontally on mobile (" + dimensions.content + "px content vs " + dimensions.viewport + "px viewport)");
+    }
+
     if (pageErrors.length) failures.push(...pageErrors.map(e => e.url + " raised JavaScript error: " + e.message));
     if (failures.length) {
       console.error("Browser smoke test failures:");
