@@ -49,7 +49,7 @@ test("homepage links to the revision planner and deployment checks include its t
   const home = fs.readFileSync("index.html","utf8");
   const workflow = fs.readFileSync(".github/workflows/pages.yml","utf8");
   assert.match(home,/href="study-planner\.html"/);
-  assert.match(workflow,/node --check assets\/js\/study-planner\.js/);
+  assert.match(workflow,/find assets\/js components locales settings/);
   assert.match(workflow,/node --test tests\/\*\.test\.cjs/);
 });
 
