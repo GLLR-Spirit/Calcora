@@ -169,7 +169,7 @@ test("sitemap lists every HTML page and points only to existing published target
     return decodeURIComponent(url.slice(base.length));
   }));
   for (const htmlFile of listHtmlFiles(root)) {
-    const relative = path.relative(root, htmlFile).replace(/\\\\/g, "/");
+    const relative = path.relative(root, htmlFile).replace(/\\/g, "/");
     const expected = relative.endsWith("/index.html") || relative === "index.html"
       ? relative === "index.html" ? "" : relative.slice(0, -"/index.html".length) + "/"
       : relative;
