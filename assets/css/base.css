@@ -277,3 +277,7 @@ footer a{white-space:nowrap}
 
 /* Measurement calculators */
 .measurement-page{max-width:850px}.measure-panel{margin:24px 0;padding:20px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}.measure-panel h2{margin-top:0}.measure-hint{color:var(--muted);font-size:.92rem}.measurement-page .result{overflow-wrap:anywhere}.measurement-page nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+
+/* Accessible labels */
+.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
