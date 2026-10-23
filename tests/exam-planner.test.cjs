@@ -29,6 +29,7 @@ test("exam backup import has file-size and record-count limits", () => {
 
 test("exam backup import validates dates and restores prior in-memory data on storage failure", () => {
   assert.match(source, /!validDate\(x\.date\)/);
+  assert.match(source, /if\(!name\|\|!validDate\(date\)\)/);
   assert.match(source, /const previous=items;items=incoming\.map/);
   assert.match(source, /if\(!save\(\)\)\{items=previous;throw Error\("storage"\)\}/);
 });
