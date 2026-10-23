@@ -1,0 +1,52 @@
+(()=>{"use strict";
+const HUB_KEY="calcora-study-hub-v1",REV_KEY="calcora_revision_cards_v1",DAY=86400000;
+const $=id=>document.getElementById(id);
+const safeRead=(key,fallback)=>{try{const v=JSON.parse(localStorage.getItem(key)||"null");return v===null?fallback:v}catch{return fallback}};
+const dateKey=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const validDate=s=>typeof s==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&Number.isFinite(new Date(s+"T12:00:00").getTime());
+const cleanArray=v=>Array.isArray(v)?v.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)):[];
+const getDashboardStats=(raw,cards,now=new Date())=>{
+ const data=raw&&typeof raw==="object"&&!Array.isArray(raw)?raw:{};
+ const items=data.items&&typeof data.items==="object"&&!Array.isArray(data.items)?data.items:{};
+ const logs=cleanArray(items.log).filter(x=>Number.isFinite(Number(x.minutes))&&Number(x.minutes)>0&&validDate(x.date));
+ const today=dateKey(now),weekStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()-((now.getDay()+6)%7));
+ const todayMinutes=logs.filter(x=>x.date===today).reduce((s,x)=>s+Number(x.minutes),0);
+ const weekLogs=logs.filter(x=>new Date(x.date+"T12:00:00")>=weekStart&&new Date(x.date+"T12:00:00")<=now);
+ const tasks=cleanArray(items.tasks),topics=cleanArray(items.topics).filter(x=>typeof x.name==="string"&&Number.isFinite(Number(x.level)));
+ const exams=cleanArray(items.deadline).filter(x=>typeof x.name==="string"&&validDate(x.date)).map(x=>({...x,days:Math.ceil((new Date(x.date+"T23:59:59")-now)/DAY)})).filter(x=>x.days>=0).sort((a,b)=>a.days-b.days).slice(0,5);
+ const weakTopics=topics.filter(x=>Number(x.level)<=2).sort((a,b)=>Number(a.level)-Number(b.level)).slice(0,5);
+ const validCards=cleanArray(cards).filter(c=>typeof c.q==="string"&&typeof c.a==="string");
+ const dueCards=validCards.filter(c=>!Number.isFinite(Number(c.dueAt))||Number(c.dueAt)<=now.getTime()).length;
+ return {todayMinutes,goal:Math.max(0,Number(data.goal)||0),weekMinutes:weekLogs.reduce((s,x)=>s+Number(x.minutes),0),weekSessions:weekLogs.length,tasksDone:tasks.filter(x=>x.done).length,tasksTotal:tasks.length,topicsMastered:topics.filter(x=>Number(x.level)>=5).length,topicsTotal:topics.length,weakTopics,exams,totalCards:validCards.length,dueCards,nextDue:validCards.map(c=>Number(c.dueAt)).filter(n=>Number.isFinite(n)&&n>now.getTime()).sort((a,b)=>a-b)[0]||null,priorityTasks:tasks.filter(x=>!x.done&&typeof x.text==="string").slice(0,3),weak:cleanArray(items.weak).filter(x=>typeof x.text==="string").slice(0,3)};
+};
+if(typeof document==="undefined"){if(typeof module!=="undefined"&&module.exports)module.exports={getDashboardStats,safeRead,validDate};return}
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const mins=n=>{n=Math.max(0,Math.round(n));return n>=60?Math.floor(n/60)+" h "+(n%60?String(n%60)+" min":""):n+" min"};
+const localDate=(d)=>new Date(d+"T12:00:00").toLocaleDateString(document.documentElement.lang==="fr"?"fr-FR":document.documentElement.lang==="ar"?"ar-DZ":"en-GB",{day:"numeric",month:"short",year:"numeric"});
+const empty=(text)=>'<p class="empty-state">'+esc(text)+'</p>';
+function render(){
+ const data=safeRead(HUB_KEY,{}),cards=safeRead(REV_KEY,[]),stats=getDashboardStats(data,cards,new Date());
+ $("today-minutes").textContent=mins(stats.todayMinutes);
+ $("today-goal").textContent=stats.goal?Math.min(100,Math.round(stats.todayMinutes/stats.goal*100))+"% of "+mins(stats.goal)+" daily goal":"Set a daily goal in Study Hub";
+ $("goal-progress").style.width=(stats.goal?Math.min(100,stats.todayMinutes/stats.goal*100):0)+"%";
+ $("week-minutes").textContent=mins(stats.weekMinutes);$("week-sessions").textContent=stats.weekSessions+" study session"+(stats.weekSessions===1?"":"s")+" logged";
+ $("tasks-completed").textContent=stats.tasksDone+" / "+stats.tasksTotal;$("tasks-pending").textContent=stats.tasksTotal-stats.tasksDone+" task"+(stats.tasksTotal-stats.tasksDone===1?"":"s")+" remaining";
+ $("topics-mastered").textContent=stats.topicsMastered+" / "+stats.topicsTotal;$("topics-weak").textContent=stats.weakTopics.length?stats.weakTopics.length+" topic"+(stats.weakTopics.length===1?"":"s")+" rated 1–2/5":"No low-confidence topics recorded";
+ $("cards-due").textContent=stats.dueCards+" due";$("cards-total").textContent=stats.totalCards+" card"+(stats.totalCards===1?"":"s")+" in your deck";
+ $("next-review").textContent=stats.dueCards?"Start now to clear your review queue.":stats.nextDue?"Next scheduled review: "+new Date(stats.nextDue).toLocaleString():"Add flashcards in Revision Studio to begin.";
+ $("upcoming-exams").innerHTML=stats.exams.length?stats.exams.map(x=>'<div class="stack-item"><strong>'+esc(x.name)+'</strong><small>'+esc(localDate(x.date))+' · '+(x.days===0?"Today":x.days===1?"Tomorrow":x.days+" days left")+'</small></div>').join(""):empty("No upcoming exams saved yet. Add dates in Study Hub.");
+ $("topic-list").innerHTML=stats.weakTopics.length?stats.weakTopics.map(x=>'<div class="stack-item"><strong>'+esc(x.name)+'</strong><small>Confidence '+esc(x.level)+'/5 · revisit this topic</small></div>').join(""):empty(stats.topicsTotal?"No topics rated low. Keep updating your confidence honestly.":"Add topics and confidence ratings in Study Hub.");
+ const priorities=[];
+ if(stats.dueCards)priorities.push({title:"Review due flashcards",detail:stats.dueCards+" card"+(stats.dueCards===1?"":"s")+" waiting",href:"revision.html"});
+ if(stats.exams[0])priorities.push({title:"Prepare for "+stats.exams[0].name,detail:stats.exams[0].days===0?"Exam date is today":stats.exams[0].days+" days until "+localDate(stats.exams[0].date),href:"study-hub.html#tool-schedule"});
+ stats.weakTopics.slice(0,2).forEach(x=>priorities.push({title:"Revisit "+x.name,detail:"Confidence "+x.level+"/5",href:"study-hub.html#tool-topics"}));
+ stats.priorityTasks.slice(0,2).forEach(x=>priorities.push({title:x.text,detail:"Incomplete task",href:"study-hub.html#tool-tasks"}));
+ stats.weak.slice(0,2).forEach(x=>priorities.push({title:"Practise "+x.text,detail:"Saved in your weak-topic list",href:"study-hub.html#tool-weak"}));
+ const unique=priorities.filter((x,i,a)=>a.findIndex(y=>y.title===x.title)===i).slice(0,5);
+ $("priority-list").innerHTML=unique.length?unique.map(x=>'<div class="stack-item"><strong>'+esc(x.title)+'</strong><small>'+esc(x.detail)+'</small><small><a href="'+x.href+'">Open tool →</a></small></div>').join(""):empty("You're all caught up. Add a task, topic or exam date to plan your next step.");
+ $("data-status").textContent=stats.tasksTotal||stats.weekSessions||stats.topicsTotal||stats.totalCards||stats.exams.length?"Updated from data saved in this browser.":"No saved study records found yet — open Study Hub to start tracking.";
+}
+if($("year"))$("year").textContent=new Date().getFullYear();
+if($("theme-toggle"))$("theme-toggle").addEventListener("click",()=>{const dark=document.documentElement.dataset.theme!=="dark";document.documentElement.dataset.theme=dark?"dark":"light";const sheet=$("theme-stylesheet");if(sheet)sheet.href=dark?"assets/css/theme-dark.css":"assets/css/theme-light.css";});
+render();window.addEventListener("focus",render);document.addEventListener("visibilitychange",()=>{if(!document.hidden)render()});window.addEventListener("storage",render);
+})();
