@@ -341,3 +341,29 @@ button:disabled{cursor:not-allowed;opacity:.55;transform:none}
 .home-notice{margin-top:36px!important}
 @media(max-width:760px){.home-section-heading{align-items:flex-start;margin-top:28px}.hero-trust{gap:8px 12px}.hero-actions{width:100%}.hero-actions a{flex:1 1 210px}}
 @media(prefers-reduced-motion:reduce){.hero-actions a{transition:none}}
+
+
+/* Calculator pages — clear inputs, focused results, and readable worked examples */
+.page{max-width:860px;padding:clamp(24px,5vw,52px) clamp(18px,4vw,32px);margin:28px auto 48px;background:var(--surface);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow-soft)}
+.page>h1{font-size:clamp(1.85rem,4vw,2.65rem);line-height:1.15;letter-spacing:-.045em;margin:0 0 12px}
+.page>p{color:var(--muted);line-height:1.75}
+.page form{margin-top:24px}
+.page .field{margin:0;min-width:0}
+.page .field span{display:block;font-size:.92rem;font-weight:700;margin-bottom:7px;color:var(--text)}
+.page input:not([type=checkbox]),.page select,.page textarea{width:100%;min-width:0;min-height:46px;border:1px solid var(--border);border-radius:12px;padding:11px 13px;background:var(--bg);transition:border-color .16s ease,box-shadow .16s ease,background .16s ease}
+.page input:focus-visible,.page select:focus-visible,.page textarea:focus-visible,.page button:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 32%,transparent);outline-offset:2px;border-color:var(--accent)}
+.page input:hover,.page select:hover,.page textarea:hover{border-color:color-mix(in srgb,var(--accent) 48%,var(--border))}
+.page form>button,.page form .primary,.page>button{min-height:44px;padding:10px 16px;border-radius:12px;font-weight:750}
+.page .row{gap:14px;margin:12px 0}
+.page .subject{padding:14px;border:1px solid var(--border);border-radius:14px;background:color-mix(in srgb,var(--surface) 80%,var(--hero))}
+.page .result{margin-top:22px;padding:20px;border:1px solid color-mix(in srgb,var(--accent) 30%,var(--border));border-radius:16px;background:var(--soft);font-size:1.08rem;line-height:1.65;overflow-wrap:anywhere}
+.page .result strong,.page .result b{font-size:clamp(1.25rem,3vw,1.8rem);font-variant-numeric:tabular-nums}
+.page .calculation-explainer{margin-top:12px;padding:18px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}
+.page .calculation-explainer h2{margin:0 0 10px;font-size:1.1rem}
+.page .calculation-explainer ol{padding-inline-start:1.4rem;margin:8px 0}
+.page .calculation-explainer li{padding:4px 0;overflow-wrap:anywhere}
+.page .explain-toggle{margin-top:12px;background:var(--surface);border:1px solid var(--border);color:var(--text)}
+.page .explain-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.page .field+.field{margin-top:14px}
+@media(max-width:600px){.page{margin:14px 12px 28px;padding:24px 16px;border-radius:18px}.page .row{grid-template-columns:1fr}.page .subject{padding:12px}.page .result{padding:16px}}
+@media(prefers-reduced-motion:reduce){.page input,.page select,.page textarea{transition:none}}
