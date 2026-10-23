@@ -5,6 +5,36 @@ const safeRead=(key,fallback)=>{try{const v=JSON.parse(localStorage.getItem(key)
 const dateKey=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const validDate=s=>typeof s==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&Number.isFinite(new Date(s+"T12:00:00").getTime());
 const cleanArray=v=>Array.isArray(v)?v.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)):[];
+const getWeeklyReport=(raw,now=new Date())=>{
+ const data=raw&&typeof raw==="object"&&!Array.isArray(raw)?raw:{};
+ const items=data.items&&typeof data.items==="object"&&!Array.isArray(data.items)?data.items:{};
+ const logs=cleanArray(items.log).filter(x=>Number.isFinite(Number(x.minutes))&&Number(x.minutes)>0&&validDate(x.date));
+ const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ const monday=new Date(today);monday.setDate(today.getDate()-((today.getDay()+6)%7));
+ const previousMonday=new Date(monday);previousMonday.setDate(monday.getDate()-7);
+ const days=Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);const key=dateKey(d);return {date:key,label:d.toLocaleDateString("en",{weekday:"short"}),minutes:logs.filter(x=>x.date===key).reduce((sum,x)=>sum+Number(x.minutes),0)};});
+ const previousMinutes=logs.filter(x=>{const d=new Date(x.date+"T12:00:00");return d>=previousMonday&&d<monday;}).reduce((sum,x)=>sum+Number(x.minutes),0);
+ const thisMinutes=days.reduce((sum,d)=>sum+d.minutes,0);
+ const goal=Math.max(0,Number(data.goal)||0);
+ const elapsedDays=Math.min(7,Math.max(0,Math.floor((today-monday)/DAY)+1));
+ const countedDays=days.slice(0,elapsedDays);
+ const activeDays=countedDays.filter(d=>d.minutes>0).length;
+ const goalDays=goal?countedDays.filter(d=>d.minutes>=goal).length:0;
+ const pending=cleanArray(items.tasks).filter(x=>!x.done).length;
+ const weak=cleanArray(items.topics).filter(x=>typeof x.name==="string"&&Number.isFinite(Number(x.level))&&Number(x.level)<=2).slice(0,3);
+ const suggestions=[];
+ if(!logs.length)suggestions.push("Log your first study session in Study Hub; future reports can then compare weeks.");
+ else if(activeDays===0)suggestions.push("No study sessions are logged for this week yet. Schedule one short session that fits your day.");
+ else if(activeDays<Math.min(4,elapsedDays))suggestions.push("Try spreading study across "+Math.min(4,elapsedDays)+" different days rather than relying on one long session.");
+ if(goal&&elapsedDays&&goalDays===0)suggestions.push("Your recorded sessions have not reached the daily goal yet. Consider a smaller, realistic target if the current one is too demanding.");
+ else if(goalDays>0)suggestions.push("You reached your daily minute goal on "+goalDays+" day"+(goalDays===1?"":"s")+" this week; keep the target realistic and sustainable.");
+ if(thisMinutes<previousMinutes)suggestions.push("Recorded study time is lower than last week. Choose one priority task and plan a manageable session.");
+ else if(thisMinutes>previousMinutes&&previousMinutes>0)suggestions.push("Recorded study time is up compared with last week. Protect breaks and keep the pace sustainable.");
+ if(weak.length)suggestions.push("Revisit "+weak.map(x=>x.name).join(", ")+" because these topics are currently rated 1–2/5.");
+ if(pending>0)suggestions.push("Choose one of your "+pending+" unfinished tasks as the next concrete action.");
+ if(!suggestions.length)suggestions.push("Keep logging sessions and updating topic confidence to make next week's report more useful.");
+ return {days,previousMinutes,thisMinutes,activeDays,goalDays,goal,elapsedDays,pending,suggestions};
+};
 const getDashboardStats=(raw,cards,now=new Date())=>{
  const data=raw&&typeof raw==="object"&&!Array.isArray(raw)?raw:{};
  const items=data.items&&typeof data.items==="object"&&!Array.isArray(data.items)?data.items:{};
@@ -19,13 +49,28 @@ const getDashboardStats=(raw,cards,now=new Date())=>{
  const dueCards=validCards.filter(c=>!Number.isFinite(Number(c.dueAt))||Number(c.dueAt)<=now.getTime()).length;
  return {todayMinutes,goal:Math.max(0,Number(data.goal)||0),weekMinutes:weekLogs.reduce((s,x)=>s+Number(x.minutes),0),weekSessions:weekLogs.length,tasksDone:tasks.filter(x=>x.done).length,tasksTotal:tasks.length,topicsMastered:topics.filter(x=>Number(x.level)>=5).length,topicsTotal:topics.length,weakTopics,exams,totalCards:validCards.length,dueCards,nextDue:validCards.map(c=>Number(c.dueAt)).filter(n=>Number.isFinite(n)&&n>now.getTime()).sort((a,b)=>a-b)[0]||null,priorityTasks:tasks.filter(x=>!x.done&&typeof x.text==="string").slice(0,3),weak:cleanArray(items.weak).filter(x=>typeof x.text==="string").slice(0,3)};
 };
-if(typeof document==="undefined"){if(typeof module!=="undefined"&&module.exports)module.exports={getDashboardStats,safeRead,validDate};return}
+if(typeof document==="undefined"){if(typeof module!=="undefined"&&module.exports)module.exports={getDashboardStats,getWeeklyReport,safeRead,validDate};return}
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const mins=n=>{n=Math.max(0,Math.round(n));return n>=60?Math.floor(n/60)+" h "+(n%60?String(n%60)+" min":""):n+" min"};
 const localDate=(d)=>new Date(d+"T12:00:00").toLocaleDateString(document.documentElement.lang==="fr"?"fr-FR":document.documentElement.lang==="ar"?"ar-DZ":"en-GB",{day:"numeric",month:"short",year:"numeric"});
 const empty=(text)=>'<p class="empty-state">'+esc(text)+'</p>';
+function renderWeeklyReport(data,now=new Date()){
+ const report=getWeeklyReport(data,now);
+ const start=new Date(now.getFullYear(),now.getMonth(),now.getDate()-((now.getDay()+6)%7));
+ const end=new Date(start);end.setDate(start.getDate()+6);
+ $("report-period").textContent=start.toLocaleDateString("en-GB",{day:"numeric",month:"short"})+" – "+end.toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+ $("report-this-week").textContent=mins(report.thisMinutes);$("report-last-week").textContent=mins(report.previousMinutes);
+ $("report-active-days").textContent=report.activeDays+" / "+report.elapsedDays;
+ $("report-goal-days").textContent=report.goal?report.goalDays+" day"+(report.goalDays===1?"":"s"):"Goal not set";
+ const delta=report.thisMinutes-report.previousMinutes;
+ $("weekly-summary").textContent=report.previousMinutes===0?(report.thisMinutes?"You have logged "+mins(report.thisMinutes)+" this week. A comparison will be available once a previous week has recorded sessions.":"No study time is recorded for this week yet."):"You logged "+mins(report.thisMinutes)+" this week, "+(delta>0?mins(delta)+" more than":delta<0?mins(Math.abs(delta))+" less than":"the same amount as")+" last week.";
+ const max=Math.max(1,...report.days.map(d=>d.minutes));
+ $("weekly-bars").innerHTML=report.days.map(d=>'<div class="day-bar"><span>'+esc(d.label)+'</span><div class="bar-track"><div style="height:'+Math.round(d.minutes/max*100)+'%"></div></div><strong>'+esc(mins(d.minutes))+'</strong></div>').join("");
+ $("weekly-suggestions").innerHTML=report.suggestions.map(s=>'<li>'+esc(s)+'</li>').join("");
+}
 function render(){
  const data=safeRead(HUB_KEY,{}),cards=safeRead(REV_KEY,[]),stats=getDashboardStats(data,cards,new Date());
+ renderWeeklyReport(data,new Date());
  $("today-minutes").textContent=mins(stats.todayMinutes);
  $("today-goal").textContent=stats.goal?Math.min(100,Math.round(stats.todayMinutes/stats.goal*100))+"% of "+mins(stats.goal)+" daily goal":"Set a daily goal in Study Hub";
  $("goal-progress").style.width=(stats.goal?Math.min(100,stats.todayMinutes/stats.goal*100):0)+"%";
