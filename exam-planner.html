@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Plan exam deadlines, see how many days remain, and organize revision priorities with Calcora's free offline exam countdown planner.">
+<link rel="canonical" href="https://gllr-spirit.github.io/Calcora/exam-planner.html">
+<title>Exam Countdown Planner — Calcora</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/theme-light.css" id="theme-stylesheet">
+<script defer src="assets/js/exam-planner.js"></script>
+</head>
+<body>
+<header><a class="brand" href="index.html">◉ Calcora</a><nav><label for="language-select" class="visually-hidden">Language</label><select id="language-select" aria-label="Language"><option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option></select> <button id="theme-toggle" type="button" aria-label="Toggle theme">☾</button></nav></header>
+<main class="page">
+<p><a href="index.html" data-t="home">Home</a> / <span data-t="crumb">Exam planner</span></p>
+<h1 data-t="title">Exam countdown planner</h1>
+<p data-t="intro">Keep upcoming exams in one place, see how much time remains, and decide what to revise first.</p>
+<aside><b data-t="privacyTitle">Your data stays on this device</b><p data-t="privacyText">Exam details are stored in this browser only. Export a backup before clearing browser data or switching devices.</p></aside>
+<section>
+<h2 data-t="addTitle">Add an exam</h2>
+<form id="exam-form">
+<label class="field"><span data-t="examName">Exam or subject name</span><input id="exam-name" maxlength="100" required autocomplete="off" placeholder="e.g. Algorithms"></label>
+<div class="row">
+<label class="field"><span data-t="dateLabel">Exam date</span><input id="exam-date" type="date" required></label>
+<label class="field"><span data-t="priority">Priority</span><select id="exam-priority"><option value="high" data-t="high">High</option><option value="medium" selected data-t="medium">Medium</option><option value="low" data-t="low">Low</option></select></label>
+</div>
+<label class="field"><span data-t="notes">Revision notes (optional)</span><input id="exam-notes" maxlength="240" autocomplete="off" data-ph="notesPlaceholder" placeholder="Topics to review, chapters, exercises…"></label>
+<button class="primary" type="submit" data-t="addButton">Add exam</button>
+</form>
+</section>
+<section>
+<div class="student-section-heading"><h2 data-t="upcoming">Your exams</h2><div class="student-actions"><button id="export-data" type="button" data-t="export">Export backup</button><label class="student-import"><span data-t="import">Import backup</span><input id="import-data" type="file" accept="application/json,.json"></label></div></div>
+<p id="status" role="status" class="student-help"></p>
+<div id="exam-list" class="history-list" aria-live="polite"></div>
+<p id="empty-state" class="student-help" data-t="empty">No exams added yet. Add your next exam above to start planning.</p>
+</section>
+<p><a href="study-planner.html" data-t="studyLink">Open revision session planner →</a></p>
+</main>
+<footer><span>© <span id="year"></span> Calcora</span><span><a href="pages/about.html" data-t="about">About</a> · <a href="pages/privacy.html" data-t="privacy">Privacy</a></span></footer>
+</body>
+</html>
