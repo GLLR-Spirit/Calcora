@@ -20,25 +20,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate JavaScript syntax
         run: |
-          node --check assets/js/app.js
-          node --check assets/js/discovery.js
-          node --check assets/js/calculator-pages.js
-          node --check assets/js/measurement-tools.js
-          node --check assets/js/science-measurements.js
-          node --check assets/js/revision.js
-          node --check assets/js/study-hub.js
-          node --check assets/js/progress-dashboard.js
-          node --check assets/js/bac-simulator.js
-          node --check assets/js/algeria-grades.js
-          node --check assets/js/education-profile.js
-          node --check assets/js/profile-pages.js
-          node --check assets/js/lmd-calculator.js
-          node --check assets/js/student-workspace.js
-          node --check assets/js/university-planner.js
-          node --check assets/js/study-planner.js
-          node --check locales/en.js
-          node --check locales/fr.js
-          node --check locales/ar.js
+          find assets/js components locales settings -type f -name '*.js' -print0 | xargs -0 -n1 node --check
       - name: Run regression tests
         run: node --test tests/*.test.cjs
       - uses: actions/configure-pages@v5
