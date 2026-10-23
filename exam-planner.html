@@ -29,6 +29,12 @@
 <button class="primary" type="submit" data-t="addButton">Add exam</button>
 </form>
 </section>
+<section class="recommendation-section" aria-labelledby="recommendation-title">
+<h2 id="recommendation-title" data-t="recTitle">What to revise first</h2>
+<p data-t="recIntro">Recommendations combine exam dates, your selected priorities, and marks saved in your student workspace on this device.</p>
+<div id="revision-recommendations" class="history-list" aria-live="polite"></div>
+<p><a href="student-workspace.html" data-t="workspaceLink">Review my subjects and marks →</a></p>
+</section>
 <section>
 <div class="student-section-heading"><h2 data-t="upcoming">Your exams</h2><div class="student-actions"><button id="export-data" type="button" data-t="export">Export backup</button><label class="student-import"><span data-t="import">Import backup</span><input id="import-data" type="file" accept="application/json,.json"></label></div></div>
 <p id="status" role="status" class="student-help"></p>
