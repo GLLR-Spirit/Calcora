@@ -291,3 +291,20 @@ footer a{white-space:nowrap}
 @media(max-width:600px){.recommendation-card{display:grid}.recommendation-link{width:100%;white-space:normal}}
 
 @media(max-width:480px){.page,.page *{min-width:0;overflow-wrap:anywhere}.student-import{max-width:100%;flex-wrap:wrap}.student-import input{width:100%;min-width:0}}
+
+
+/* Calcora design refinement — visual consistency and accessible contrast */
+::selection{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--text)}
+body{background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+header{backdrop-filter:saturate(140%) blur(12px)}
+header nav{flex-wrap:wrap}
+header nav select{max-width:100%}
+button:not(.primary):not(.hero-cta):not(.discovery-filter):hover{background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+button:disabled{cursor:not-allowed;opacity:.55;transform:none}
+.card:focus-visible,.tool-card:focus-within{outline:3px solid color-mix(in srgb,var(--accent) 42%,transparent);outline-offset:3px}
+.card p,.page p{overflow-wrap:anywhere}
+.page section>h2,.page section>h3{scroll-margin-top:20px}
+.result{color:var(--text)}
+.student-table tbody tr:focus-within{background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+@media(hover:none){.card:hover,.study-planner .study-plan:hover,.student-workspace .history-card:hover{transform:none;box-shadow:var(--shadow-soft)}}
+@media(prefers-contrast:more){:root{--border:color-mix(in srgb,var(--text) 35%,var(--bg))}.muted,.student-help,.discovery-meta{color:var(--text)}}
