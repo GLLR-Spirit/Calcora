@@ -12,10 +12,11 @@ const getWeeklyReport=(raw,now=new Date())=>{
  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
  const monday=new Date(today);monday.setDate(today.getDate()-((today.getDay()+6)%7));
  const previousMonday=new Date(monday);previousMonday.setDate(monday.getDate()-7);
- const days=Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);const key=dateKey(d);return {date:key,label:d.toLocaleDateString("en",{weekday:"short"}),minutes:logs.filter(x=>x.date===key).reduce((sum,x)=>sum+Number(x.minutes),0)};});
- const previousMinutes=logs.filter(x=>{const d=new Date(x.date+"T12:00:00");return d>=previousMonday&&d<monday;}).reduce((sum,x)=>sum+Number(x.minutes),0);
- const goal=Math.max(0,Number(data.goal)||0);
  const elapsedDays=Math.min(7,Math.max(0,Math.floor((today-monday)/DAY)+1));
+ const days=Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);const key=dateKey(d);return {date:key,label:d.toLocaleDateString("en",{weekday:"short"}),minutes:logs.filter(x=>x.date===key).reduce((sum,x)=>sum+Number(x.minutes),0)};});
+ const previousEnd=new Date(previousMonday);previousEnd.setDate(previousMonday.getDate()+elapsedDays);
+ const previousMinutes=logs.filter(x=>{const d=new Date(x.date+"T12:00:00");return d>=previousMonday&&d<previousEnd;}).reduce((sum,x)=>sum+Number(x.minutes),0);
+ const goal=Math.max(0,Number(data.goal)||0);
  const countedDays=days.slice(0,elapsedDays);
  const thisMinutes=countedDays.reduce((sum,d)=>sum+d.minutes,0);
  const activeDays=countedDays.filter(d=>d.minutes>0).length;
@@ -28,8 +29,8 @@ const getWeeklyReport=(raw,now=new Date())=>{
  else if(activeDays<Math.min(4,elapsedDays))suggestions.push("Try spreading study across "+Math.min(4,elapsedDays)+" different days rather than relying on one long session.");
  if(goal&&elapsedDays&&goalDays===0)suggestions.push("Your recorded sessions have not reached the daily goal yet. Consider a smaller, realistic target if the current one is too demanding.");
  else if(goalDays>0)suggestions.push("You reached your daily minute goal on "+goalDays+" day"+(goalDays===1?"":"s")+" this week; keep the target realistic and sustainable.");
- if(thisMinutes<previousMinutes)suggestions.push("Recorded study time is lower than last week. Choose one priority task and plan a manageable session.");
- else if(thisMinutes>previousMinutes&&previousMinutes>0)suggestions.push("Recorded study time is up compared with last week. Protect breaks and keep the pace sustainable.");
+ if(thisMinutes<previousMinutes)suggestions.push("Recorded study time is lower than the same period last week. Choose one priority task and plan a manageable session.");
+ else if(thisMinutes>previousMinutes&&previousMinutes>0)suggestions.push("Recorded study time is up compared with the same period last week. Protect breaks and keep the pace sustainable.");
  if(weak.length)suggestions.push("Revisit "+weak.map(x=>x.name).join(", ")+" because these topics are currently rated 1–2/5.");
  if(pending>0)suggestions.push("Choose one of your "+pending+" unfinished tasks as the next concrete action.");
  if(!suggestions.length)suggestions.push("Keep logging sessions and updating topic confidence to make next week's report more useful.");
