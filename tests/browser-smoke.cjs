@@ -4,6 +4,7 @@ const { chromium } = require("playwright");
 const base = (process.env.SITE_URL || "https://gllr-spirit.github.io/Calcora/").replace(/\/$/, "") + "/";
 const failures = [];
 const pageErrors = [];
+const internalLinks = new Set();
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
@@ -27,10 +28,36 @@ const pageErrors = [];
         await page.waitForLoadState("networkidle", { timeout: 4000 }).catch(() => {});
         const title = await page.title();
         const bodyText = (await page.locator("body").innerText().catch(() => "")).trim();
+        const description = (await page.locator('meta[name="description"]').getAttribute("content").catch(() => "")) || "";
         if (!title.trim()) failures.push(url + " has an empty document title");
+        if (!description.trim()) failures.push(url + " has no meta description");
         if (bodyText.length < 15) failures.push(url + " has almost no visible page content");
+
+        const links = await page.locator("a[href]").evaluateAll(nodes => nodes.map(a => ({
+          href: a.href,
+          label: (a.innerText || a.getAttribute("aria-label") || "").trim(),
+          isCard: a.classList.contains("card")
+        })));
+        for (const link of links) {
+          if (link.isCard && (!link.label || !link.href)) failures.push(url + " has a card without a label or destination");
+          try {
+            const target = new URL(link.href);
+            if (target.origin === new URL(base).origin && target.pathname.startsWith(new URL(base).pathname) && !target.hash) {
+              internalLinks.add(target.href);
+            }
+          } catch {}
+        }
       } catch (error) {
         failures.push(url + " navigation failed: " + error.message);
+      }
+    }
+
+    for (const href of internalLinks) {
+      try {
+        const response = await page.request.get(href, { timeout: 10000 });
+        if (response.status() !== 200) failures.push(href + " returned HTTP " + response.status());
+      } catch (error) {
+        failures.push(href + " link check failed: " + error.message);
       }
     }
 
@@ -63,7 +90,7 @@ const pageErrors = [];
       failures.forEach(failure => console.error("- " + failure));
       process.exitCode = 1;
     } else {
-      console.log("Browser smoke tests passed for " + urls.length + " sitemap URLs, plus language, theme, search, category filter and FAQ interactions.");
+      console.log("Browser smoke tests passed for " + urls.length + " sitemap URLs, " + internalLinks.size + " internal links, page descriptions and cards, plus language, theme, search, category filter and FAQ interactions.");
     }
   } finally {
     await browser.close();
