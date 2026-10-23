@@ -46,8 +46,8 @@ const pageErrors = [];
     await page.locator("#tool-search").fill("calcora-browser-test-no-match");
     assert.equal(await page.locator(".tool-card:visible").count(), 0, "search should filter all non-matching tool cards");
     await page.locator("#tool-search").fill("");
-    await page.locator('[data-category="education"]').click();
-    assert.equal(await page.locator('[data-category="education"]').getAttribute("aria-pressed"), "true", "category filter should activate");
+    await page.locator('.discovery-filter[data-category="education"]').click();
+    assert.equal(await page.locator('.discovery-filter[data-category="education"]').getAttribute("aria-pressed"), "true", "category filter should activate");
 
     const faqUrl = new URL("pages/faq.html", base).href;
     await page.goto(faqUrl, { waitUntil: "domcontentloaded" });
