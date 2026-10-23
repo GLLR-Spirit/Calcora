@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { getDashboardStats, validDate } = require("../assets/js/progress-dashboard.js");
+const { getDashboardStats, getWeeklyReport, validDate } = require("../assets/js/progress-dashboard.js");
 
 test("dashboard aggregates today and current-week study logs", () => {
  const now = new Date("2026-10-23T12:00:00");
@@ -20,16 +20,16 @@ test("dashboard handles due cards, future cards and malformed records", () => {
  const s=getDashboardStats({},[{q:"Q1",a:"A1"},{q:"Q2",a:"A2",dueAt:1000},{q:"Q3",a:"A3",dueAt:9999999999999},null],new Date("2026-10-23T12:00:00"));
  assert.equal(s.totalCards,3); assert.equal(s.dueCards,2); assert.ok(s.nextDue>new Date("2026-10-23T12:00:00").getTime());
 });
-test("date validation rejects invalid formats",()=>{assert.equal(validDate("2026-10-23"),true);assert.equal(validDate("23/10/2026"),false);assert.equal(validDate("invalid"),false)});
+test("date validation rejects invalid formats and impossible calendar dates",()=>{assert.equal(validDate("2026-10-23"),true);assert.equal(validDate("23/10/2026"),false);assert.equal(validDate("invalid"),false);assert.equal(validDate("2026-02-31"),false);assert.equal(validDate("2026-13-01"),false);assert.equal(validDate("2026-04-00"),false);assert.equal(validDate("0001-01-01"),true)});
 
 test("weekly report compares current and previous weeks without counting future days", () => {
  const now=new Date("2026-10-23T12:00:00");
  const data={goal:30,items:{log:[{date:"2026-10-19",minutes:30},{date:"2026-10-20",minutes:15},{date:"2026-10-12",minutes:45},{date:"2026-10-25",minutes:999}],tasks:[{done:false,text:"Revise"}],topics:[{name:"Pointers",level:2}]}};
- const r=require("../assets/js/progress-dashboard.js").getWeeklyReport(data,now);
+ const r=getWeeklyReport(data,now);
  assert.equal(r.thisMinutes,45);assert.equal(r.previousMinutes,45);assert.equal(r.activeDays,2);assert.equal(r.goalDays,1);assert.equal(r.elapsedDays,5);
  assert.ok(r.suggestions.some(s=>s.includes("Pointers")));
 });
 test("weekly report handles empty data and unset goals", () => {
- const r=require("../assets/js/progress-dashboard.js").getWeeklyReport({},new Date("2026-10-23T12:00:00"));
+ const r=getWeeklyReport({},new Date("2026-10-23T12:00:00"));
  assert.equal(r.thisMinutes,0);assert.equal(r.previousMinutes,0);assert.equal(r.goalDays,0);assert.equal(r.activeDays,0);assert.ok(r.suggestions.length>0);
 });
