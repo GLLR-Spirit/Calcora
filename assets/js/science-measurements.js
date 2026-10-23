@@ -11,3 +11,52 @@ function init(){const root=document.querySelector("[data-science-measurements]")
 if(typeof module!=="undefined"&&module.exports)module.exports={area,volume,speed,acceleration};
 if(typeof document!=="undefined")init();
 })();
+
+/* Accessible worked steps for science measurement calculators */
+(()=>{"use strict";
+const translations={
+en:{show:"Show calculation steps",hide:"Hide calculation steps",title:"Calculation breakdown",formula:"Formula",values:"Substitute the values",result:"Result",areaSquare:"Area = side × side",areaRectangle:"Area = length × width",areaCircle:"Area = π × radius²",volumeCube:"Volume = side³",volumeBox:"Volume = length × width × height",volumeCylinder:"Volume = π × radius² × height",speed:"Average speed = distance ÷ time",acceleration:"Average acceleration = (final velocity − initial velocity) ÷ elapsed time",multiply:"Multiply the dimensions",square:"Square the radius",cube:"Multiply the side three times",divide:"Divide distance by elapsed time",change:"Subtract initial velocity from final velocity, then divide by time",unitArea:"square metres (m²)",unitVolume:"cubic metres (m³)",unitSpeed:"metres per second (m/s)",unitAcceleration:"metres per second squared (m/s²)"},
+fr:{show:"Voir les étapes du calcul",hide:"Masquer les étapes du calcul",title:"Détail du calcul",formula:"Formule",values:"Remplacer par les valeurs",result:"Résultat",areaSquare:"Surface = côté × côté",areaRectangle:"Surface = longueur × largeur",areaCircle:"Surface = π × rayon²",volumeCube:"Volume = côté³",volumeBox:"Volume = longueur × largeur × hauteur",volumeCylinder:"Volume = π × rayon² × hauteur",speed:"Vitesse moyenne = distance ÷ durée",acceleration:"Accélération moyenne = (vitesse finale − vitesse initiale) ÷ durée",multiply:"Multiplier les dimensions",square:"Élever le rayon au carré",cube:"Multiplier le côté trois fois",divide:"Diviser la distance par la durée",change:"Soustraire la vitesse initiale de la vitesse finale, puis diviser par la durée",unitArea:"mètres carrés (m²)",unitVolume:"mètres cubes (m³)",unitSpeed:"mètres par seconde (m/s)",unitAcceleration:"mètres par seconde carrée (m/s²)"},
+ar:{show:"عرض خطوات الحساب",hide:"إخفاء خطوات الحساب",title:"تفاصيل الحساب",formula:"القانون",values:"التعويض بالقيم",result:"النتيجة",areaSquare:"المساحة = الضلع × الضلع",areaRectangle:"المساحة = الطول × العرض",areaCircle:"المساحة = π × نصف القطر²",volumeCube:"الحجم = الضلع³",volumeBox:"الحجم = الطول × العرض × الارتفاع",volumeCylinder:"الحجم = π × نصف القطر² × الارتفاع",speed:"السرعة المتوسطة = المسافة ÷ الزمن",acceleration:"التسارع المتوسط = (السرعة النهائية − الابتدائية) ÷ الزمن",multiply:"اضرب الأبعاد",square:"ارفع نصف القطر إلى القوة الثانية",cube:"اضرب الضلع في نفسه ثلاث مرات",divide:"اقسم المسافة على الزمن",change:"اطرح السرعة الابتدائية من النهائية ثم اقسم على الزمن",unitArea:"متر مربع (م²)",unitVolume:"متر مكعب (م³)",unitSpeed:"متر في الثانية (م/ث)",unitAcceleration:"متر في الثانية المربعة (م/ث²)"}
+};
+const $=id=>document.getElementById(id);
+const fmt=n=>new Intl.NumberFormat(document.documentElement.lang==="ar"?"ar-DZ":document.documentElement.lang==="fr"?"fr-FR":"en-US",{maximumFractionDigits:8}).format(n);
+function attach(formId,resultId,kind){
+ const form=$(formId),result=$(resultId);if(!form||!result)return;
+ const button=document.createElement("button");button.type="button";button.className="explain-toggle";button.hidden=true;
+ const panel=document.createElement("section");panel.className="calculation-explainer";panel.hidden=true;panel.setAttribute("aria-live","polite");
+ result.insertAdjacentElement("afterend",button);button.insertAdjacentElement("afterend",panel);
+ let latest=null;
+ const locale=()=>translations[$("language-select")?.value||document.documentElement.lang]||translations.en;
+ const refreshLabel=()=>{const d=locale();button.textContent=panel.hidden?d.show:d.hide};
+ $("language-select")?.addEventListener("change",refreshLabel);
+ form.addEventListener("submit",()=>{
+  if(kind==="area")latest={shape:$("area-shape").value,a:Number($("area-a").value),b:$("area-b")?Number($("area-b").value):null};
+  if(kind==="volume")latest={shape:$("volume-shape").value,a:Number($("volume-a").value),b:$("volume-b")?Number($("volume-b").value):null,c:$("volume-c")?Number($("volume-c").value):null};
+  if(kind==="speed")latest={a:Number($("distance").value),b:Number($("time").value)};
+  if(kind==="acceleration")latest={a:Number($("initial").value),b:Number($("final").value),c:Number($("seconds").value)};
+  button.hidden=false;panel.hidden=true;refreshLabel();
+ });
+ button.addEventListener("click",()=>{
+  if(!latest)return;const d=locale();panel.replaceChildren();panel.hidden=!panel.hidden;refreshLabel();if(panel.hidden)return;
+  const heading=document.createElement("h2");heading.textContent=d.title;panel.append(heading);
+  let formula="",steps=[],answer=Number.NaN;
+  if(kind==="area"){
+   formula=latest.shape==="square"?d.areaSquare:latest.shape==="rectangle"?d.areaRectangle:d.areaCircle;
+   answer=latest.shape==="square"?latest.a**2:latest.shape==="rectangle"?latest.a*latest.b:Math.PI*latest.a**2;
+   steps=latest.shape==="square"?[d.values+": "+fmt(latest.a)+" × "+fmt(latest.a),d.result+": "+fmt(answer)+" "+d.unitArea]:latest.shape==="rectangle"?[d.values+": "+fmt(latest.a)+" × "+fmt(latest.b),d.multiply,d.result+": "+fmt(answer)+" "+d.unitArea]:[d.values+": π × "+fmt(latest.a)+"²",d.square,d.result+": "+fmt(answer)+" "+d.unitArea];
+  }else if(kind==="volume"){
+   formula=latest.shape==="cube"?d.volumeCube:latest.shape==="box"?d.volumeBox:d.volumeCylinder;
+   answer=latest.shape==="cube"?latest.a**3:latest.shape==="box"?latest.a*latest.b*latest.c:Math.PI*latest.a**2*latest.b;
+   steps=latest.shape==="cube"?[d.values+": "+fmt(latest.a)+" × "+fmt(latest.a)+" × "+fmt(latest.a),d.cube,d.result+": "+fmt(answer)+" "+d.unitVolume]:latest.shape==="box"?[d.values+": "+fmt(latest.a)+" × "+fmt(latest.b)+" × "+fmt(latest.c),d.multiply,d.result+": "+fmt(answer)+" "+d.unitVolume]:[d.values+": π × "+fmt(latest.a)+"² × "+fmt(latest.b),d.square,d.result+": "+fmt(answer)+" "+d.unitVolume];
+  }else if(kind==="speed"){
+   formula=d.speed;answer=latest.a/latest.b;steps=[d.values+": "+fmt(latest.a)+" ÷ "+fmt(latest.b),d.divide,d.result+": "+fmt(answer)+" "+d.unitSpeed];
+  }else{
+   formula=d.acceleration;answer=(latest.b-latest.a)/latest.c;steps=[d.values+": ("+fmt(latest.b)+" − "+fmt(latest.a)+") ÷ "+fmt(latest.c),d.change,d.result+": "+fmt(answer)+" "+d.unitAcceleration];
+  }
+  const p=document.createElement("p"),strong=document.createElement("strong");strong.textContent=d.formula+": ";p.append(strong,document.createTextNode(formula));panel.append(p);
+  const list=document.createElement("ol");steps.forEach(text=>{const li=document.createElement("li");li.textContent=text;list.append(li)});panel.append(list);
+ });
+}
+attach("area-form","area-result","area");attach("volume-form","volume-result","volume");attach("speed-form","speed-result","speed");attach("acceleration-form","acceleration-result","acceleration");
+})();
