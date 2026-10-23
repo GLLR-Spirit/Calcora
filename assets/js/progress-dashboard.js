@@ -40,9 +40,9 @@ const getDashboardStats=(raw,cards,now=new Date())=>{
  const data=raw&&typeof raw==="object"&&!Array.isArray(raw)?raw:{};
  const items=data.items&&typeof data.items==="object"&&!Array.isArray(data.items)?data.items:{};
  const logs=cleanArray(items.log).filter(x=>Number.isFinite(Number(x.minutes))&&Number(x.minutes)>0&&validDate(x.date));
- const today=dateKey(now),weekStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()-((now.getDay()+6)%7));
+ const today=dateKey(now),weekStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()-((now.getDay()+6)%7)),weekStartKey=dateKey(weekStart);
  const todayMinutes=logs.filter(x=>x.date===today).reduce((s,x)=>s+Number(x.minutes),0);
- const weekLogs=logs.filter(x=>new Date(x.date+"T12:00:00")>=weekStart&&new Date(x.date+"T12:00:00")<=now);
+ const weekLogs=logs.filter(x=>x.date>=weekStartKey&&x.date<=today);
  const tasks=cleanArray(items.tasks),topics=cleanArray(items.topics).filter(x=>typeof x.name==="string"&&Number.isFinite(Number(x.level)));
  const exams=cleanArray(items.deadline).filter(x=>typeof x.name==="string"&&validDate(x.date)).map(x=>({...x,days:Math.ceil((new Date(x.date+"T23:59:59")-now)/DAY)})).filter(x=>x.days>=0).sort((a,b)=>a.days-b.days).slice(0,5);
  const weakTopics=topics.filter(x=>Number(x.level)<=2).sort((a,b)=>Number(a.level)-Number(b.level)).slice(0,5);
