@@ -84,6 +84,56 @@ const internalLinks = new Set();
     await page.locator("details.faq-item").first().locator("summary").click();
     assert.equal(await page.locator("details.faq-item").first().evaluate(el => el.open), true, "FAQ accordion should open");
 
+    // Exercise real calculator forms and verify their displayed results.
+    await page.goto(new URL("calculators/algeria/grades.html", base).href, { waitUntil: "domcontentloaded" });
+    await page.locator("#calc-type").selectOption("weighted");
+    await page.locator(".grade-row").nth(0).locator(".mark").fill("12");
+    await page.locator(".grade-row").nth(0).locator(".coef").fill("2");
+    await page.locator(".grade-row").nth(1).locator(".mark").fill("14");
+    await page.locator(".grade-row").nth(1).locator(".coef").fill("3");
+    await page.locator("#calculate").click();
+    assert.match(await page.locator("#result").innerText(), /13,20/, "weighted grade average should calculate to 13.20");
+    await page.locator("#calc-type").selectOption("year");
+    await page.locator("#semester1").fill("12");
+    await page.locator("#semester2").fill("14");
+    await page.locator("#calculate").click();
+    assert.match(await page.locator("#result").innerText(), /13,00/, "annual average should calculate to 13.00");
+
+    await page.goto(new URL("calculators/science/measurements.html", base).href, { waitUntil: "domcontentloaded" });
+    await page.locator("#area-form button[type=submit]").click();
+    assert.match(await page.locator("#area-result").innerText(), /16/, "square area should calculate from default side length");
+    await page.locator("#volume-shape").selectOption("box");
+    await page.locator("#volume-form button[type=submit]").click();
+    assert.ok((await page.locator("#volume-result").innerText()).trim().length > 0, "volume calculator should show a result");
+    await page.locator("#speed-form button[type=submit]").click();
+    assert.match(await page.locator("#speed-result").innerText(), /5/, "speed calculator should return 5 m/s");
+    await page.locator("#acceleration-form button[type=submit]").click();
+    assert.match(await page.locator("#acceleration-result").innerText(), /5/, "acceleration calculator should return 5 m/s²");
+
+    await page.goto(new URL("calculators/math/percentage.html", base).href, { waitUntil: "domcontentloaded" });
+    await page.locator("#pct button[type=submit]").click();
+    assert.match(await page.locator("#pct-result").innerText(), /30/, "15 percent of 200 should be 30");
+    await page.goto(new URL("calculators/conversions/units.html", base).href, { waitUntil: "domcontentloaded" });
+    await page.locator("#amount").fill("1");
+    await page.locator("#from").selectOption("km");
+    await page.locator("#to").selectOption("m");
+    await page.locator("#units-form button[type=submit]").click();
+    assert.match(await page.locator("#units-result").innerText(), /1000/, "one kilometre should convert to 1000 metres");
+
+    await page.goto(new URL("education-levels/university/lmd-calculator.html", base).href, { waitUntil: "domcontentloaded" });
+    const moduleRow = page.locator(".module-row").first();
+    await moduleRow.locator(".module-name").fill("Algorithms");
+    await moduleRow.locator(".ue-name").fill("Computer Science");
+    await moduleRow.locator(".semester-select").selectOption("S1");
+    await moduleRow.locator(".cc-mark").fill("12");
+    await moduleRow.locator(".exam-mark").fill("16");
+    await moduleRow.locator(".cc-weight").fill("1");
+    await moduleRow.locator(".exam-weight").fill("1");
+    await moduleRow.locator(".module-coeff").fill("1");
+    await moduleRow.locator(".ue-coeff").fill("1");
+    await page.locator("#calculate").click();
+    assert.match(await page.locator("#results").innerText(), /14,00/, "LMD calculator should compute a module average of 14.00");
+
     if (pageErrors.length) failures.push(...pageErrors.map(e => e.url + " raised JavaScript error: " + e.message));
     if (failures.length) {
       console.error("Browser smoke test failures:");
