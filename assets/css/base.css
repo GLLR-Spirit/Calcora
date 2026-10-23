@@ -289,3 +289,5 @@ footer a{white-space:nowrap}
 .recommendation-card p{overflow-wrap:anywhere}
 .recommendation-link{display:inline-flex;align-items:center;justify-content:center;align-self:center;padding:10px 14px;border-radius:10px;white-space:nowrap}
 @media(max-width:600px){.recommendation-card{display:grid}.recommendation-link{width:100%;white-space:normal}}
+
+@media(max-width:480px){.page,.page *{min-width:0;overflow-wrap:anywhere}.student-import{max-width:100%;flex-wrap:wrap}.student-import input{width:100%;min-width:0}}
