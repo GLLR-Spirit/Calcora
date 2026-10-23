@@ -176,7 +176,7 @@ test("sitemap lists every HTML page and points only to existing published target
     assert.ok(publishedPaths.has(expected), "Missing from sitemap: " + relative);
   }
   for (const published of publishedPaths) {
-    const normalized = published.replace(/\\/$/, "") || "index.html";
+    const normalized = (published.endsWith("/") ? published.slice(0, -1) : published) || "index.html";
     const target = path.join(root, normalized);
     const indexFile = path.join(target, "index.html");
     assert.ok(fs.existsSync(target) && fs.statSync(target).isFile() || fs.existsSync(indexFile) && fs.statSync(indexFile).isFile(),
