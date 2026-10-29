@@ -176,6 +176,20 @@ const internalLinks = new Set();
     await page.locator("#run-code").click();
     await page.waitForFunction(() => !document.querySelector("#run-code").disabled, { timeout: 3000 });
     assert.match(await page.locator("#code-output").innerText(), /Sum: 22/, "JavaScript playground should capture console output");
+    await page.waitForTimeout(1600);
+    await page.locator("#code-input").fill('console.log("fetch:", typeof fetch); console.log("XHR:", typeof XMLHttpRequest); return 9007199254740993n;');
+    await page.locator("#run-code").click();
+    await page.waitForFunction(() => !document.querySelector("#run-code").disabled, { timeout: 3000 });
+    const restrictedOutput = await page.locator("#code-output").innerText();
+    assert.match(restrictedOutput, /fetch: undefined/, "playground worker should disable direct fetch access");
+    assert.match(restrictedOutput, /XHR: undefined/, "playground worker should disable XMLHttpRequest");
+    assert.match(restrictedOutput, /9007199254740993n/, "playground should safely display BigInt results");
+    await page.waitForTimeout(1600);
+    await page.locator("#code-input").fill('for (let i = 0; i < 60; i++) console.log("x".repeat(100), i);');
+    await page.locator("#run-code").click();
+    await page.waitForFunction(() => !document.querySelector("#run-code").disabled, { timeout: 3000 });
+    assert.ok((await page.locator("#code-output").innerText()).length <= 2600, "playground output should remain capped");
+
     await page.locator("#language-select").selectOption("en");
     await page.locator("#formula-search").fill("binary");
     assert.equal(await page.locator(".formula-card").count(), 1, "formula search should filter to binary search");
@@ -211,6 +225,12 @@ const internalLinks = new Set();
       return Array.from(await doc.save());
     });
     const sampleBuffer = Buffer.from(samplePdfBytes);
+    await page.locator("#pdf-files").setInputFiles({ name: "notes.txt", mimeType: "text/plain", buffer: Buffer.from("not a PDF") });
+    await page.locator("#process-pdf").click();
+    assert.match(await page.locator("#pdf-status").innerText(), /valid PDF files/i, "PDF tool should reject non-PDF files");
+    await page.locator("#pdf-files").setInputFiles(Array.from({ length: 9 }, (_, i) => ({ name: "sample-" + i + ".pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4") })));
+    await page.locator("#process-pdf").click();
+    assert.match(await page.locator("#pdf-status").innerText(), /no more than 8 PDF files/i, "PDF tool should enforce the file-count limit");
     await page.locator("#pdf-files").setInputFiles([
       { name: "sample-a.pdf", mimeType: "application/pdf", buffer: sampleBuffer },
       { name: "sample-b.pdf", mimeType: "application/pdf", buffer: sampleBuffer }
