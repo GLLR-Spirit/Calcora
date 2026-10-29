@@ -4,7 +4,7 @@ const path = require("node:path");
 const vm = require("node:vm");
 
 function loadMath(file, exportName) {
-  const context = { window: {}, document: { querySelector: () => null } };
+  const context = { window: {}, document: { querySelector: () => null, getElementById: () => null } };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", file), "utf8"), context, { filename: file });
   assert.ok(context.window[exportName], file + " should expose its pure calculation functions for tests");
   return context.window[exportName];
