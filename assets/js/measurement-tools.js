@@ -25,6 +25,7 @@ $("travel-form").addEventListener("submit",e=>{e.preventDefault();const n=travel
 $("perimeter-form").addEventListener("submit",e=>{e.preventDefault();const shape=$("shape").value,a=Number($("side").value),b=Number($("side2").value);let n=perimeter(shape,a,b);out("perimeter-result",n===null?tr("error"):fmt(n)+" m")});$("shape").addEventListener("change",()=>{$("side2-field").hidden=$("shape").value!=="rectangle";$("side").previousElementSibling.dataset.t=$("shape").value==="circle"?"side":"side";});$("distance-form").addEventListener("submit",e=>{e.preventDefault();const n=distance2D($("x1").value,$("y1").value,$("x2").value,$("y2").value);out("distance-result",n===null?tr("error"):fmt(n)+" units")});$("scale-form").addEventListener("submit",e=>{e.preventDefault();const d=Number($("drawing").value),s=Number($("scale-ratio").value),n=d*s/100;if(!(d>=0&&s>0&&Number.isFinite(n)))out("scale-result",tr("error"));else out("scale-result",fmt(n)+" m")})}}
 if(typeof module!=="undefined"&&module.exports)module.exports={convert,durationParts,elapsedSeconds,addDuration,perimeter,distance2D,travelTime};
 if(typeof document!=="undefined")init();
+if(typeof window!=="undefined")window.CALCORA_MEASUREMENT_MATH={convert,durationParts,elapsedSeconds,addDuration,perimeter,distance2D,travelTime};
 })();
 /* Accessible step-by-step explanations for length and time tools */
 (()=>{"use strict";if(typeof document==="undefined")return;
@@ -34,7 +35,6 @@ fr:{show:"Voir les étapes du calcul",hide:"Masquer les étapes du calcul",title
 ar:{show:"عرض خطوات الحساب",hide:"إخفاء خطوات الحساب",title:"تفاصيل الحساب",formula:"القانون",substitute:"التعويض بالقيم",result:"النتيجة",convert:"التحويل عبر الوحدة الأساسية",perimeterSquare:"محيط المربع = 4 × الضلع",perimeterRect:"محيط المستطيل = 2 × (الطول + العرض)",perimeterCircle:"محيط الدائرة = 2 × π × نصف القطر",distance:"المسافة = √((x₂ − x₁)² + (y₂ − y₁)²)",scale:"الطول الحقيقي (م) = طول الرسم (سم) × مقام المقياس ÷ 100",elapsed:"الوقت المنقضي = وقت النهاية − وقت البداية (أضف 24 ساعة عند تجاوز منتصف الليل)",finish:"وقت النهاية = وقت البداية + المدة",travel:"مدة الرحلة = المسافة ÷ السرعة",base:"حوّل القيمة أولاً إلى الوحدة الأساسية، ثم اقسم على معامل وحدة الهدف.",invalid:"تعذر شرح الحساب بهذه القيم.",hours:"ساعات",minutes:"دقائق",seconds:"ثوانٍ",day:"يوم"}
 };
 const units={length:{mm:.001,cm:.01,dm:.1,m:1,km:1000,in:.0254,ft:.3048,yd:.9144,mi:1609.344},time:{ms:.001,s:1,min:60,h:3600,d:86400,w:604800}};
-if(typeof window!=="undefined")window.CALCORA_MEASUREMENT_MATH={convert,durationParts,elapsedSeconds,addDuration,perimeter,distance2D,travelTime};
 const root=document.querySelector(".measurement-page[data-tool]");if(!root)return;
 const $=id=>document.getElementById(id),locale=()=>text[$("language-select")?.value||document.documentElement.lang]||text.en;
 const num=n=>new Intl.NumberFormat(document.documentElement.lang==="ar"?"ar-DZ":document.documentElement.lang==="fr"?"fr-FR":"en-US",{maximumFractionDigits:9}).format(n);
