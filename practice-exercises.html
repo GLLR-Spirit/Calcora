@@ -71,10 +71,10 @@ exercises.push(
 
 let lang="en", pool=[], current=null, hintIndex=0, index=0;
 const progressKey="calcora_practice_progress_v1";
-function readProgress(){try{const p=JSON.parse(localStorage.getItem(progressKey)||"{}");return {attempts:Number.isFinite(p.attempts)?p.attempts:0,solved:Array.isArray(p.solved)?p.solved:[]}}catch(e){return {attempts:0,solved:[]}}}
+function readProgress(){try{const p=JSON.parse(localStorage.getItem(progressKey)||"{}");return {attempts:Number.isFinite(p.attempts)?p.attempts:0,correctAttempts:Number.isFinite(p.correctAttempts)?p.correctAttempts:0,solved:Array.isArray(p.solved)?p.solved:[]}}catch(e){return {attempts:0,correctAttempts:0,solved:[]}}}
 let progress=readProgress();
 function saveProgress(){try{localStorage.setItem(progressKey,JSON.stringify(progress))}catch(e){}}
-function updateProgress(){const solved=progress.solved.length;$("solved-count").textContent=solved;$("attempts-count").textContent=progress.attempts;$("accuracy-count").textContent=(progress.attempts?Math.round(solved/Math.max(progress.attempts,solved)*100):0)+"%"}
+function updateProgress(){const solved=progress.solved.length;$("solved-count").textContent=solved;$("attempts-count").textContent=progress.attempts;$("accuracy-count").textContent=(progress.attempts?Math.round(progress.correctAttempts/progress.attempts*100):0)+"%"}
 function t(k){return ui[lang][k]||ui.en[k]||k}
 function normalize(s){return String(s||"").toLowerCase().replace(/[−–]/g,"-").replace(/²/g,"^2").replace(/³/g,"^3").replace(/\s+/g,"").replace(/,/g,".").replace(/(cm|m\/s²|m\/s2|m\/s|newtons?|n)$/g,"").replace(/×/g,"*")}
 function isCorrect(value){const v=normalize(value);return current.a.some(a=>normalize(a)===v)}
@@ -101,9 +101,9 @@ $("level").options[0].text=t("allLevels");$("level").options[1].text=t("middle")
 render();}
 $("subject").addEventListener("change",()=>{index=0;render()});$("level").addEventListener("change",()=>{index=0;render()});
 $("language-select").addEventListener("change",e=>setLang(e.target.value));
-$("check").addEventListener("click",()=>{if(!current)return;if(!$("answer").value.trim()){$("feedback").textContent=t("answerRequired");$("feedback").hidden=false;return}const correct=isCorrect($("answer").value);progress.attempts++;if(correct&&!progress.solved.includes(current.id))progress.solved.push(current.id);saveProgress();updateProgress();$("feedback").textContent=correct?t("correct"):t("incorrect");$("feedback").hidden=false});
+$("check").addEventListener("click",()=>{if(!current)return;if(!$("answer").value.trim()){$("feedback").textContent=t("answerRequired");$("feedback").hidden=false;return}const correct=isCorrect($("answer").value);progress.attempts++;if(correct)progress.correctAttempts++;if(correct&&!progress.solved.includes(current.id))progress.solved.push(current.id);saveProgress();updateProgress();$("feedback").textContent=correct?t("correct"):t("incorrect");$("feedback").hidden=false});
 $("random").addEventListener("click",()=>{if(pool.length<2){index=0;render();return}let next;do{next=Math.floor(Math.random()*pool.length)}while(pool[next]===current);index=next;render()});
-$("reset-progress").addEventListener("click",()=>{progress={attempts:0,solved:[]};saveProgress();updateProgress();$("feedback").textContent=t("progressReset");$("feedback").hidden=false});
+$("reset-progress").addEventListener("click",()=>{progress={attempts:0,correctAttempts:0,solved:[]};saveProgress();updateProgress();$("feedback").textContent=t("progressReset");$("feedback").hidden=false});
 $("answer").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("check").click()}});
 $("hint").addEventListener("click",()=>{if(!current)return;const hints=current.h[lang]||current.h.en; if(hintIndex>=hints.length){$("hint-box").textContent=t("noHints");$("hint").disabled=true;}else{$("hint-box").textContent=t("hintProgress").replace("{n}",hintIndex+1).replace("{total}",hints.length)+": "+hints[hintIndex++];$("hint").textContent=hintIndex<hints.length?t("nextHint"):t("noHints");if(hintIndex>=hints.length)$("hint").disabled=true;}$("hint-box").hidden=false});
 $("solution").addEventListener("click",()=>{if(!current)return;$("solution-box").textContent=t("solutionTitle")+"\n"+current.c[lang];$("solution-box").hidden=false});
