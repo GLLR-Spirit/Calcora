@@ -42,3 +42,10 @@ jobs:
         env:
           SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node tests/browser-smoke.cjs
+      - name: Upload visual smoke-test screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: calcora-learning-lab-visual-check
+          path: artifacts/*.png
+          if-no-files-found: ignore
