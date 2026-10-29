@@ -176,6 +176,7 @@ const internalLinks = new Set();
     await page.locator("#run-code").click();
     await page.waitForFunction(() => !document.querySelector("#run-code").disabled, { timeout: 3000 });
     assert.match(await page.locator("#code-output").innerText(), /Sum: 22/, "JavaScript playground should capture console output");
+    await page.locator("#language-select").selectOption("en");
     await page.locator("#formula-search").fill("binary");
     assert.equal(await page.locator(".formula-card").count(), 1, "formula search should filter to binary search");
     await page.locator("#citation-author").fill("Doe, Jane");
@@ -185,6 +186,36 @@ const internalLinks = new Set();
     await page.locator("#citation-url").fill("https://example.org");
     await page.locator("#make-citation").click();
     assert.match(await page.locator("#citation-result").innerText(), /Testing Learning Tools/, "citation helper should format entered title");
+    await page.waitForFunction(() => !!window.PDFLib, { timeout: 8000 });
+    const samplePdfBytes = await page.evaluate(async () => {
+      const doc = await window.PDFLib.PDFDocument.create();
+      doc.addPage([300, 400]);
+      doc.addPage([300, 400]);
+      return Array.from(await doc.save());
+    });
+    const sampleBuffer = Buffer.from(samplePdfBytes);
+    await page.locator("#pdf-files").setInputFiles([
+      { name: "sample-a.pdf", mimeType: "application/pdf", buffer: sampleBuffer },
+      { name: "sample-b.pdf", mimeType: "application/pdf", buffer: sampleBuffer }
+    ]);
+    await page.locator("#pdf-action").selectOption("merge");
+    const mergeDownloadPromise = page.waitForEvent("download");
+    await page.locator("#process-pdf").click();
+    const mergeDownload = await mergeDownloadPromise;
+    assert.equal(mergeDownload.suggestedFilename(), "calcora-merged.pdf", "PDF merge should produce a download");
+    await page.locator("#pdf-files").setInputFiles({ name: "sample.pdf", mimeType: "application/pdf", buffer: sampleBuffer });
+    await page.locator("#pdf-action").selectOption("split");
+    await page.locator("#pdf-range").fill("1-1");
+    const splitDownloadPromise = page.waitForEvent("download");
+    await page.locator("#process-pdf").click();
+    const splitDownload = await splitDownloadPromise;
+    assert.equal(splitDownload.suggestedFilename(), "calcora-pages-1-1.pdf", "PDF page extraction should produce a download");
+    await page.locator("#pdf-action").selectOption("rotate");
+    await page.locator("#pdf-rotation").selectOption("90");
+    const rotateDownloadPromise = page.waitForEvent("download");
+    await page.locator("#process-pdf").click();
+    const rotateDownload = await rotateDownloadPromise;
+    assert.equal(rotateDownload.suggestedFilename(), "calcora-rotated.pdf", "PDF rotation should produce a download");
     await page.locator("#language-select").selectOption("fr");
     assert.equal(await page.locator("html").getAttribute("lang"), "fr", "Learning Lab language selector should switch to French");
     await page.setViewportSize({ width: 390, height: 844 });
