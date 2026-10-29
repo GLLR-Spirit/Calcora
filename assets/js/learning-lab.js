@@ -48,7 +48,7 @@ self.onmessage=({data})=>{
  const add=(level,args)=>{if(logs.length>=40)return;const line=(level?level+": ":"")+args.map(stringify).join(" ");const remaining=2500-logChars;if(remaining<=0)return;const clipped=line.slice(0,remaining);logs.push(clipped);logChars+=clipped.length};
  const safeConsole={log:(...a)=>add("",a),warn:(...a)=>add("WARN",a),error:(...a)=>add("ERROR",a)};
  try{
-  const result=(new Function("console",'"use strict";\n'+data))(safeConsole);
+  const result=(new Function("console",'"use strict";\\n'+data))(safeConsole);
   let rendered;
   if(result!==undefined){rendered=stringify(result).slice(0,4000)}
   sendResult({ok:true,logs,result:rendered});
