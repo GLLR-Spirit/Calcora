@@ -25,8 +25,8 @@ test("duration helpers handle midnight, day rollover and invalid input", () => {
   assert.deepEqual({ ...measurement.durationParts(90061) }, { sign: "", days: 1, hours: 1, minutes: 1, seconds: 1 });
   assert.equal(measurement.elapsedSeconds("22:30", "01:15"), 9900);
   assert.equal(measurement.elapsedSeconds("25:00", "01:00"), null);
-  assert.deepEqual({ ...measurement.addDuration("23:00", 90) }, { time: "00:30:00", dayOffset: 1 });
-  assert.equal(measurement.addDuration("12:00", -1), null);
+  assert.deepEqual({ ...measurement.addDuration("23:00", 5400) }, { time: "00:30:00", dayOffset: 1 });
+  assert.equal(measurement.addDuration("12:00", -60), null);
 });
 
 test("perimeter, distance and travel-time functions reject invalid or non-finite results", () => {
