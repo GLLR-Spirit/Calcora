@@ -91,3 +91,22 @@ test("every calculator HTML page has a unique title, description and canonical U
     assert.match(html, /property=["']og:description["']/, relative + " needs Open Graph description metadata");
   }
 });
+
+test("shared calculator locales contain the same keys and every page key is translated", () => {
+  const localeFiles = ["en", "fr", "ar"].map(code => fs.readFileSync(path.join(__dirname, "..", "locales", code + ".js"), "utf8"));
+  const keySets = localeFiles.map(source => {
+    const match = source.match(/CALCORA_LOCALES\\.(?:en|fr|ar)=\\{([\\s\\S]*?)\\};/);
+    assert.ok(match, "locale dictionary should be present");
+    return [...match[1].matchAll(/([A-Za-z_$][\\w$]*)\\s*:/g)].map(item => item[1]).sort();
+  });
+  assert.deepEqual(keySets[1], keySets[0], "French locale keys should match English");
+  assert.deepEqual(keySets[2], keySets[0], "Arabic locale keys should match English");
+  for (const file of ["calculators/grades/average.html", "calculators/math/percentage.html", "calculators/conversions/units.html"]) {
+    const html = fs.readFileSync(path.join(__dirname, "..", file), "utf8");
+    for (const [, key] of html.matchAll(/data-i18n=["']([^"']+)["']/g)) {
+      assert.ok(keySets.every(keys => keys.includes(key)), file + " has an untranslated key: " + key);
+    }
+    assert.match(html, /id=["']language-select["'][^>]*aria-label=["']Language["']/, file + " needs an accessible language selector");
+    assert.match(html, /id=["']theme-toggle["'][^>]*aria-label=["']Toggle theme["']/, file + " needs an accessible theme control");
+  }
+});
