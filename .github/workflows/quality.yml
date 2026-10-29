@@ -1,0 +1,22 @@
+name: Calcora quality checks
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate JavaScript syntax
+        run: |
+          find assets/js components locales settings -type f -name '*.js' -print0 | xargs -0 -n1 node --check
+      - name: Run regression and edge-case tests
+        run: node --test tests/*.test.cjs
