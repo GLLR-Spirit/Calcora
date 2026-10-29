@@ -1,4 +1,5 @@
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const { chromium } = require("playwright");
 
 const base = (process.env.SITE_URL || "https://gllr-spirit.github.io/Calcora/").replace(/\/$/, "") + "/";
@@ -150,6 +151,47 @@ const internalLinks = new Set();
     await page.waitForFunction(() => JSON.parse(localStorage.getItem("calcora-exam-countdown-v1") || "[]").some(e => e.name === "Calcora exam persistence smoke test"));
     await page.reload({ waitUntil: "domcontentloaded" });
     assert.match(await page.locator("#exam-list").innerText(), /Calcora exam persistence smoke test/, "saved exam should reappear after reload");
+
+
+    // Test the newly published Learning Lab controls and capture desktop/mobile layouts.
+    await page.setViewportSize({ width: 1365, height: 900 });
+    await page.goto(new URL("learning-lab.html", base).href, { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("networkidle", { timeout: 4000 }).catch(() => {});
+    assert.equal(await page.locator("#equations").count(), 1, "equation solver section should exist");
+    assert.equal(await page.locator("#algorithms").count(), 1, "algorithm visualizer section should exist");
+    assert.equal(await page.locator("#playground").count(), 1, "code playground section should exist");
+    await page.screenshot({ path: "artifacts/learning-lab-desktop.png", fullPage: true });
+    await page.locator("#solve-equation").click();
+    assert.match(await page.locator("#equation-result").innerText(), /x = 3/, "linear equation 2x - 6 = 0 should solve to x=3");
+    await page.locator("#equation-type").selectOption("quadratic");
+    await page.locator("#coef-a").fill("1");
+    await page.locator("#coef-b").fill("-3");
+    await page.locator("#coef-c").fill("2");
+    await page.locator("#solve-equation").click();
+    assert.match(await page.locator("#equation-result").innerText(), /x₁ = 2, x₂ = 1|x₁ = 2.*x₂ = 1/, "x² - 3x + 2 should have roots 2 and 1");
+    await page.locator("#algorithm-start").click();
+    assert.equal(await page.locator(".algorithm-bar").count(), 6, "algorithm visualizer should render all input values");
+    await page.locator("#algorithm-step").click();
+    assert.ok((await page.locator("#algorithm-status").innerText()).length > 0, "algorithm step should update status");
+    await page.locator("#run-code").click();
+    await page.waitForFunction(() => !document.querySelector("#run-code").disabled, { timeout: 3000 });
+    assert.match(await page.locator("#code-output").innerText(), /Sum: 22/, "JavaScript playground should capture console output");
+    await page.locator("#formula-search").fill("binary");
+    assert.equal(await page.locator(".formula-card").count(), 1, "formula search should filter to binary search");
+    await page.locator("#citation-author").fill("Doe, Jane");
+    await page.locator("#citation-year").fill("2025");
+    await page.locator("#citation-title").fill("Testing Learning Tools");
+    await page.locator("#citation-publisher").fill("Calcora");
+    await page.locator("#citation-url").fill("https://example.org");
+    await page.locator("#make-citation").click();
+    assert.match(await page.locator("#citation-result").innerText(), /Testing Learning Tools/, "citation helper should format entered title");
+    await page.locator("#language-select").selectOption("fr");
+    assert.equal(await page.locator("html").getAttribute("lang"), "fr", "Learning Lab language selector should switch to French");
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(new URL("learning-lab.html", base).href, { waitUntil: "domcontentloaded" });
+    const labMobile = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
+    if (labMobile.content > labMobile.viewport + 2) failures.push("learning-lab.html overflows horizontally on mobile (" + labMobile.content + "px content vs " + labMobile.viewport + "px viewport)");
+    await page.screenshot({ path: "artifacts/learning-lab-mobile.png", fullPage: true });
 
     // Check core student pages at a narrow mobile viewport for horizontal overflow.
     await page.setViewportSize({ width: 390, height: 844 });
