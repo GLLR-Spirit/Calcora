@@ -92,3 +92,4 @@ test("every published HTML page has one canonical URL and complete Open Graph me
     assert.equal(getAttribute(ogSiteName[0], "content"), "Calcora", relative + " og:site_name must identify Calcora");
   }
 });
+
