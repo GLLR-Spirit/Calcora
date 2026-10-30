@@ -125,7 +125,6 @@ test("calculator form controls have accessible names and result regions announce
   for (const file of walk(calculatorRoot)) {
     const relative = path.relative(root, file).split(path.sep).join("/");
     const html = fs.readFileSync(file, "utf8");
-    const ids = new Set([...html.matchAll(/\bid=["']([^"']+)["']/gi)].map(match => match[1]));
     const explicitLabels = new Set([...html.matchAll(/<label\b[^>]*\bfor=["']([^"']+)["'][^>]*>/gi)].map(match => match[1]));
     const wrappedControls = new Set();
     for (const match of html.matchAll(/<label\b[^>]*>([\s\S]*?)<\/label>/gi)) {
