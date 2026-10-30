@@ -1,6 +1,6 @@
-import pytest
 from decimal import Decimal
 
+import pytest
 from calcora.mathematics import weighted_average
 
 
