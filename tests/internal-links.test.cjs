@@ -184,3 +184,51 @@ test("sitemap lists every HTML page and points only to existing published target
       "Sitemap target does not exist: " + published);
   }
 });
+
+
+test("all local HTML fragment links resolve to an existing id or named anchor", () => {
+  const htmlFiles = listHtmlFiles(root);
+  const missing = [];
+
+  for (const sourceFile of htmlFiles) {
+    const html = fs.readFileSync(sourceFile, "utf8");
+    const links = html.matchAll(/<a\\b[^>]*\\bhref\\s*=\\s*(["'])(.*?)\\1[^>]*>/gi);
+
+    for (const link of links) {
+      const rawUrl = link[2].trim();
+      const hashIndex = rawUrl.indexOf("#");
+      if (hashIndex < 0) continue;
+      const rawFragment = rawUrl.slice(hashIndex + 1).split("?")[0];
+      if (!rawFragment) continue;
+
+      let fragment;
+      try {
+        fragment = decodeURIComponent(rawFragment);
+      } catch {
+        missing.push({ page: path.relative(root, sourceFile), url: rawUrl, reason: "invalid fragment encoding" });
+        continue;
+      }
+
+      const rawPath = rawUrl.slice(0, hashIndex).split("?")[0];
+      if (/^(?:[a-z][a-z0-9+.-]*:|\\/\\/)/i.test(rawPath)) continue;
+      const target = rawPath ? resolveLocalTarget(sourceFile, rawPath) : sourceFile;
+      if (!target || !fs.existsSync(target) || !fs.statSync(target).isFile() || !target.endsWith(".html")) continue;
+
+      const targetHtml = fs.readFileSync(target, "utf8");
+      const anchors = new Set([
+        ...[...targetHtml.matchAll(/\\bid\\s*=\\s*(["'])(.*?)\\1/gi)].map(match => match[2]),
+        ...[...targetHtml.matchAll(/<a\\b[^>]*\\bname\\s*=\\s*(["'])(.*?)\\1[^>]*>/gi)].map(match => match[2])
+      ]);
+      if (!anchors.has(fragment)) {
+        missing.push({
+          page: path.relative(root, sourceFile).replace(/\\\\/g, "/"),
+          url: rawUrl,
+          target: path.relative(root, target).replace(/\\\\/g, "/"),
+          fragment
+        });
+      }
+    }
+  }
+
+  assert.deepEqual(missing, [], "Broken local HTML fragment links were found");
+});
