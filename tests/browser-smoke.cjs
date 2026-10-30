@@ -77,6 +77,46 @@ const internalLinks = new Set();
     await page.locator('.discovery-filter[data-category="education"]').click();
     assert.equal(await page.locator('.discovery-filter[data-category="education"]').getAttribute("aria-pressed"), "true", "category filter should activate");
 
+    // Verify favorites and recently-used history using the real homepage controls.
+    const firstTool = page.locator(".tool-grid .tool-card").first();
+    const firstToolLink = firstTool.locator("a.card");
+    const firstToolTitle = (await firstToolLink.locator("h3").innerText()).trim();
+    await firstTool.locator(".favorite-toggle").click();
+    assert.equal(await firstTool.locator(".favorite-toggle").getAttribute("aria-pressed"), "true", "favorite control should save the selected tool");
+    await page.locator('.discovery-filter[data-category="favorites"]').click();
+    assert.equal(await page.locator(".tool-grid .tool-card:visible").count(), 1, "favorites filter should show the saved tool");
+    await page.locator('.discovery-filter[data-category="all"]').click();
+    await firstToolLink.click();
+    await page.goBack({ waitUntil: "domcontentloaded" });
+    await page.waitForFunction(() => document.querySelector("#recent-tools") && !document.querySelector("#recent-tools").hidden);
+    assert.match(await page.locator("#recent-list").innerText(), new RegExp(firstToolTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\    await page.locator('.discovery-filter[data-category="education"]').click();
+    assert.equal(await page.locator('.discovery-filter[data-category="education"]').getAttribute("aria-pressed"), "true", "category filter should activate");
+")), "recently-used history should record the opened tool");
+    await page.locator("#clear-recent").click();
+    assert.equal(await page.locator("#recent-tools").isVisible(), false, "clear history should hide the recently-used section");
+
+    // Capture and check the real homepage in every supported language and requested viewport.
+    for (const width of [360, 412, 768, 1365]) {
+      for (const language of ["en", "fr", "ar"]) {
+        await page.setViewportSize({ width, height: width >= 768 ? 1024 : 844 });
+        await page.goto(base, { waitUntil: "domcontentloaded" });
+        await page.locator("#language-select").selectOption(language);
+        await page.waitForFunction(code => document.documentElement.lang === code, language);
+        const layout = await page.evaluate(() => ({
+          viewport: document.documentElement.clientWidth,
+          content: document.documentElement.scrollWidth,
+          direction: document.documentElement.dir
+        }));
+        if (layout.content > layout.viewport + 2) {
+          failures.push("homepage " + language + " overflows at " + width + "px (" + layout.content + "px content vs " + layout.viewport + "px viewport)");
+        }
+        assert.equal(layout.direction, language === "ar" ? "rtl" : "ltr", "document direction should follow the selected language");
+        assert.ok((await page.locator("#tool-search").isVisible()), "homepage search should remain visible in " + language);
+        assert.ok((await page.locator(".discovery-toolbar").isVisible()), "category filters should remain visible in " + language);
+        await page.screenshot({ path: "artifacts/home-" + language + "-" + width + ".png", fullPage: true });
+      }
+    }
+
     const faqUrl = new URL("pages/faq.html", base).href;
     await page.goto(faqUrl, { waitUntil: "domcontentloaded" });
     assert.equal(await page.locator("details.faq-item").count(), 8, "FAQ should display all eight questions");
