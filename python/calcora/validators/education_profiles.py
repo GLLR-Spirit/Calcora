@@ -19,7 +19,7 @@ def validate_education_profile(profile: Mapping[str, object]) -> list[str]:
         errors.append("name must be a non-empty string")
 
     status = profile.get("status")
-    if status not in {"draft", "verified"}:
+    if status not in ("draft", "verified"):
         errors.append("status must be 'draft' or 'verified'")
 
     academic_year = profile.get("academic_year")
@@ -56,8 +56,11 @@ def validate_education_profile(profile: Mapping[str, object]) -> list[str]:
             if not isinstance(subject_name, str) or not subject_name.strip():
                 errors.append(f"subjects[{index}].name must be a non-empty string")
 
+            raw_coefficient = subject.get("coefficient")
             try:
-                coefficient = Decimal(str(subject.get("coefficient")))
+                if isinstance(raw_coefficient, bool):
+                    raise InvalidOperation
+                coefficient = Decimal(str(raw_coefficient))
                 if not coefficient.is_finite() or coefficient <= 0:
                     raise InvalidOperation
             except (InvalidOperation, ValueError):
