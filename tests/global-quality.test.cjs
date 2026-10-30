@@ -144,9 +144,7 @@ test("calculator form controls have accessible names and result regions announce
 
 test("all interactive calculator pages have complete English, French and Arabic translations", () => {
   const root = path.join(__dirname, "..");
-  const locales = Object.fromEntries(["en", "fr", "ar"].map(locale => [
-    locale, fs.readFileSync(path.join(root, "locales", locale + ".js"), "utf8")
-  ]));
+  const locales = Object.fromEntries(["en", "fr", "ar"].map(locale => [locale, fs.readFileSync(path.join(root, "locales", locale + ".js"), "utf8")]));
   const dictionaries = {
     algeria: fs.readFileSync(path.join(root, "assets/js/algeria-grades.js"), "utf8"),
     measurement: fs.readFileSync(path.join(root, "assets/js/measurement-tools.js"), "utf8"),
@@ -158,11 +156,11 @@ test("all interactive calculator pages have complete English, French and Arabic 
       const char = source[i];
       if (quote) {
         if (escaped) escaped = false;
-        else if (char === "\\\\") escaped = true;
+        else if (char.charCodeAt(0) === 92) escaped = true;
         else if (char === quote) quote = null;
         continue;
       }
-      if (char === "\\\"" || char === "\\'" || char === "`") { quote = char; continue; }
+      if ([34, 39, 96].includes(char.charCodeAt(0))) { quote = char; continue; }
       if (char === "{") depth++;
       else if (char === "}") { depth--; if (depth === 0) return i; }
     }
@@ -174,17 +172,17 @@ test("all interactive calculator pages have complete English, French and Arabic 
       const char = block[i];
       if (quote) {
         if (escaped) escaped = false;
-        else if (char === "\\\\") escaped = true;
+        else if (char.charCodeAt(0) === 92) escaped = true;
         else if (char === quote) quote = null;
         continue;
       }
-      if (char === "\\\"" || char === "\\'" || char === "`") { quote = char; continue; }
+      if ([34, 39, 96].includes(char.charCodeAt(0))) { quote = char; continue; }
       if (i > 0 && block[i - 1] !== ",") continue;
       if (!/[A-Za-z_$]/.test(char)) continue;
       let end = i + 1;
-      while (end < block.length && /[\\w$]/.test(block[end])) end++;
+      while (end < block.length && /[\w$]/.test(block[end])) end++;
       let colon = end;
-      while (/\\s/.test(block[colon] || "")) colon++;
+      while (/\s/.test(block[colon] || "")) colon++;
       if (block[colon] === ":") keys.push(block.slice(i, end));
     }
     return keys;
@@ -193,8 +191,7 @@ test("all interactive calculator pages have complete English, French and Arabic 
     let openIndex;
     if (kind === "shared") {
       const marker = "window.CALCORA_LOCALES." + locale + "=";
-      const markerIndex = source.indexOf(marker);
-      openIndex = source.indexOf("{", markerIndex);
+      openIndex = source.indexOf("{", source.indexOf(marker));
     } else {
       const marker = kind === "algeria" ? "const w={" : kind === "measurement" ? "const dict={" : "const translations={";
       const rootOpen = source.indexOf("{", source.indexOf(marker));
@@ -209,25 +206,23 @@ test("all interactive calculator pages have complete English, French and Arabic 
     return propertyKeys(source.slice(openIndex + 1, end));
   }
   const pages = [
-    ["calculators/algeria/grades.html", "algeria", "data-i18n"],
-    ["calculators/grades/average.html", "shared", "data-i18n"],
-    ["calculators/math/percentage.html", "shared", "data-i18n"],
-    ["calculators/conversions/units.html", "shared", "data-i18n"],
-    ["calculators/conversions/length.html", "measurement", "data-t"],
-    ["calculators/conversions/time.html", "measurement", "data-t"],
-    ["calculators/science/measurements.html", "science", "data-t"]
+    ["calculators/algeria/grades.html", "algeria"],
+    ["calculators/grades/average.html", "shared"],
+    ["calculators/math/percentage.html", "shared"],
+    ["calculators/conversions/units.html", "shared"],
+    ["calculators/conversions/length.html", "measurement"],
+    ["calculators/conversions/time.html", "measurement"],
+    ["calculators/science/measurements.html", "science"]
   ];
-  for (const [page, kind, attribute] of pages) {
+  for (const [page, kind] of pages) {
     const html = fs.readFileSync(path.join(root, page), "utf8");
-    const usedKeys = [...new Set([...html.matchAll(new RegExp(attribute + "=[\\\"\\\']([^\\\"\\\']+)[\\\"\\\']", "g"))].map(match => match[1]))];
+    const usedKeys = [...new Set([...html.matchAll(/data-(?:i18n|t)="([^"]+)"/g)].map(match => match[1]))];
     const keysByLocale = Object.fromEntries(["en", "fr", "ar"].map(locale => {
       const source = kind === "shared" ? locales[locale] : dictionaries[kind];
       return [locale, dictionaryKeys(source, kind, locale)];
     }));
     const englishKeys = [...keysByLocale.en].sort();
-    for (const locale of ["fr", "ar"]) {
-      assert.deepEqual([...keysByLocale[locale]].sort(), englishKeys, page + " has inconsistent " + locale + " translation keys");
-    }
+    for (const locale of ["fr", "ar"]) assert.deepEqual([...keysByLocale[locale]].sort(), englishKeys, page + " has inconsistent " + locale + " translation keys");
     for (const locale of ["en", "fr", "ar"]) {
       const available = new Set(keysByLocale[locale]);
       for (const key of usedKeys) assert.ok(available.has(key), page + " is missing " + locale + " translation for: " + key);
