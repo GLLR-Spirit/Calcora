@@ -15,7 +15,7 @@ function walkHtml(directory) {
 }
 
 function attribute(tag, name) {
-  const match = tag.match(new RegExp("\\b" + name + "\\s*=\\s*([\\"'])(.*?)\\1", "i"));
+  const match = tag.match(new RegExp(String.raw`\b${name}\s*=\s*(['"])(.*?)\1`, "i"));
   return match ? match[2] : null;
 }
 
@@ -47,12 +47,12 @@ test("all published HTML pages meet baseline accessibility checks", () => {
     if (mainCount !== 1) issues.push(relative + ": expected exactly one main landmark, found " + mainCount);
 
     const ids = new Set();
-    for (const match of html.matchAll(/\bid\s*=\s*([\\"'])(.*?)\1/gi)) {
+    for (const match of html.matchAll(/\bid\s*=\s*(["'])(.*?)\1/gi)) {
       if (ids.has(match[2])) issues.push(relative + ": duplicate id #" + match[2]);
       ids.add(match[2]);
     }
 
-    const explicitLabels = new Set([...html.matchAll(/<label\b[^>]*\bfor\s*=\s*([\\"'])(.*?)\1[^>]*>/gi)].map((match) => match[2]));
+    const explicitLabels = new Set([...html.matchAll(/<label\b[^>]*\bfor\s*=\s*(["'])(.*?)\1[^>]*>/gi)].map((match) => match[2]));
     const labelRanges = [...html.matchAll(/<label\b[^>]*>[\s\S]*?<\/label>/gi)]
       .map((match) => ({ start: match.index, end: match.index + match[0].length }));
 
@@ -87,10 +87,10 @@ test("all published HTML pages meet baseline accessibility checks", () => {
       if (attribute(image[0], "alt") === null) issues.push(relative + ": image is missing an alt attribute");
     }
 
-    const resultRegions = [...html.matchAll(/<[^>]+class\s*=\s*([\\"'])[^\\"']*\bresult\b[^\\"']*\1[^>]*>/gi)];
+    const resultRegions = [...html.matchAll(/<[^>]+class\s*=\s*(["'])[^"']*\bresult\b[^"']*\1[^>]*>/gi)];
     for (const result of resultRegions) {
-      if (!/\brole\s*=\s*([\\"'])status\1/i.test(result[0]) ||
-          !/\baria-live\s*=\s*([\\"'])polite\1/i.test(result[0])) {
+      if (!/\brole\s*=\s*(["'])status\1/i.test(result[0]) ||
+          !/\baria-live\s*=\s*(["'])polite\1/i.test(result[0])) {
         issues.push(relative + ": result region should announce updates with role=status and aria-live=polite");
       }
     }
