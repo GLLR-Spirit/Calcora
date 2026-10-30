@@ -20,3 +20,29 @@ jobs:
           find assets/js components locales settings -type f -name '*.js' -print0 | xargs -0 -n1 node --check
       - name: Run regression and edge-case tests
         run: node --test tests/*.test.cjs
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Serve the pull request branch
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory . > /tmp/calcora-http.log 2>&1 &
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4173/ > /dev/null
+      - name: Run interactive browser audit
+        env:
+          SITE_URL: http://127.0.0.1:4173/
+        run: |
+          mkdir -p artifacts
+          node tests/browser-smoke.cjs
+      - name: Upload browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: calcora-browser-audit
+          path: artifacts/*.png
+          if-no-files-found: warn
+          retention-days: 14
