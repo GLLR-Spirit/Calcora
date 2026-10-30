@@ -9,7 +9,7 @@ FIXTURES = Path(__file__).parents[1] / "fixtures" / "average-cases.json"
 
 
 def test_simple_average_uses_decimal_arithmetic() -> None:
-    assert simple_average(["10.5", "11.5"]) == Decimal("11")
+    assert simple_average(["10.5", "11.5"]) == Decimal(11)
 
 
 def test_simple_average_accepts_integer_and_float_inputs() -> None:
