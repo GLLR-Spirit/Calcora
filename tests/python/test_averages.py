@@ -1,6 +1,5 @@
-from decimal import Decimal
-
 import pytest
+from decimal import Decimal
 
 from calcora.mathematics import weighted_average
 
@@ -10,7 +9,7 @@ def test_weighted_average_uses_decimal_arithmetic() -> None:
 
 
 def test_weighted_average_accepts_integer_and_float_inputs() -> None:
-    assert weighted_average([(10, 1), (20.0, 1)]) == Decimal("15")
+    assert weighted_average([(10, 1), (20.0, 1)]) == Decimal(15)
 
 
 def test_weighted_average_rejects_empty_input() -> None:
