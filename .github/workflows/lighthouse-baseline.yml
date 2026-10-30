@@ -6,6 +6,9 @@ on:
     paths:
       - '.github/workflows/lighthouse-baseline.yml'
       - '**.html'
+      - 'assets/css/**'
+      - 'assets/js/**'
+      - 'locales/**'
       - 'favicon.svg'
 
 permissions:
@@ -50,6 +53,10 @@ jobs:
           average|http://127.0.0.1:4173/calculators/grades/average.html
           learning-lab|http://127.0.0.1:4173/learning-lab.html
           finance|http://127.0.0.1:4173/calculators/finance/index.html
+          about|http://127.0.0.1:4173/pages/about.html
+          contact|http://127.0.0.1:4173/pages/contact.html
+          privacy|http://127.0.0.1:4173/pages/privacy.html
+          faq|http://127.0.0.1:4173/pages/faq.html
           PAGES
       - name: Add Lighthouse summary to workflow
         run: |
@@ -79,7 +86,7 @@ jobs:
               ms('total-blocking-time') + ' | ' + (cls == null ? 'n/a' : cls.toFixed(3)) + ' |');
           }
           lines.push('', 'Full JSON reports are attached as the `lighthouse-reports` artifact.');
-          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\\n') + '\\n');
           NODE
       - name: Upload Lighthouse reports
         uses: actions/upload-artifact@v4
