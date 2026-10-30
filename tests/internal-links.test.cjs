@@ -92,7 +92,8 @@ test("LMD calculator supports configurable pass threshold and ECTS credits", () 
   const js = fs.readFileSync("assets/js/lmd-calculator.js", "utf8");
   assert.match(html, /id="pass-mark"/);
   assert.match(js, /ue-credits/);
-  assert.match(js, /u\.earned=u\.average!==null&&u\.average>=passMark\?u\.credits:0/);
+  const math = fs.readFileSync("assets/js/lmd-math.js", "utf8");
+  assert.match(math, /unit\.earned=unit\.average>=threshold\?unit\.credits:0/);
   assert.match(js, /Number\(m\.credits\?\?0\)>=0/);
   assert.match(js, /creditConflict/);
 });
@@ -101,7 +102,7 @@ test("LMD calculator supports configurable pass threshold and ECTS credits", () 
 test("LMD low marks can be sent to revision cards without replacing existing cards", () => {
   const lmd = fs.readFileSync("assets/js/lmd-calculator.js", "utf8");
   const revision = fs.readFileSync("assets/js/revision.js", "utf8");
-  assert.match(lmd, /mods\.filter\(m=>m\.ma<passMark\)/);
+  assert.match(lmd, /result\.modules\.filter\(m=>m\.average<result\.passMark\)/);
   assert.match(lmd, /calcora_revision_cards_v1/);
   assert.match(lmd, /existing\.concat\(fresh\)/);
   assert.match(lmd, /window\.location\.href="\.\.\/\.\.\/revision\.html\?source=lmd&added="/);
