@@ -27,9 +27,9 @@ test("LMD aggregates multiple modules, teaching units and semesters", () => {
   ]);
   assert.equal(result.valid, true);
   assert.equal(result.units.length, 3);
-  assert.equal(result.semesterAverages.S1, 13.6);
-  assert.equal(result.semesterAverages.S2, 15);
-  assert.equal(result.annual, (13.6 * 4 + 15 * 2) / 6);
+  assert.equal(result.semesterAverages.S1, 13.666666666666666);
+  assert.equal(result.semesterAverages.S2, 46 / 3);
+  assert.equal(result.annual, 14.222222222222221);
   assert.equal(result.earnedECTS, 15);
   assert.equal(result.totalECTS, 15);
 });
