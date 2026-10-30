@@ -1,0 +1,73 @@
+name: Calcora Lighthouse baseline
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+      - name: Measure representative pages
+        run: |
+          mkdir -p lighthouse-reports
+          while IFS='|' read -r name url; do
+            echo "Measuring $name: $url"
+            npx --yes lighthouse@12.8.2 "$url" \
+              --chrome-flags="--headless --no-sandbox" \
+              --only-categories=performance,accessibility,best-practices,seo \
+              --output=json \
+              --output-path="lighthouse-reports/$name.json" \
+              --quiet
+          done <<'PAGES'
+          home|https://gllr-spirit.github.io/Calcora/
+          average|https://gllr-spirit.github.io/Calcora/calculators/grades/average.html
+          learning-lab|https://gllr-spirit.github.io/Calcora/learning-lab.html
+          finance|https://gllr-spirit.github.io/Calcora/calculators/finance/index.html
+          PAGES
+      - name: Add Lighthouse summary to workflow
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const dir = 'lighthouse-reports';
+          const files = fs.readdirSync(dir).filter(file => file.endsWith('.json')).sort();
+          const score = value => value == null ? 'n/a' : Math.round(value * 100);
+          const lines = [
+            '## Lighthouse baseline',
+            '',
+            '| Page | Performance | Accessibility | Best practices | SEO | LCP | TBT | CLS |',
+            '|---|---:|---:|---:|---:|---:|---:|---:|'
+          ];
+          for (const file of files) {
+            const report = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'));
+            const c = report.categories || {};
+            const a = report.audits || {};
+            const page = path.basename(file, '.json');
+            const seconds = id => a[id]?.numericValue == null ? 'n/a' : (a[id].numericValue / 1000).toFixed(2) + ' s';
+            const ms = id => a[id]?.numericValue == null ? 'n/a' : Math.round(a[id].numericValue) + ' ms';
+            const cls = a['cumulative-layout-shift']?.numericValue;
+            lines.push('| ' + page + ' | ' + score(c.performance?.score) + ' | ' +
+              score(c.accessibility?.score) + ' | ' + score(c['best-practices']?.score) + ' | ' +
+              score(c.seo?.score) + ' | ' + seconds('largest-contentful-paint') + ' | ' +
+              ms('total-blocking-time') + ' | ' + (cls == null ? 'n/a' : cls.toFixed(3)) + ' |');
+          }
+          lines.push('', 'Full JSON reports are attached as the `lighthouse-reports` artifact.');
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
+          NODE
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: calcora-lighthouse-baseline
+          path: lighthouse-reports/*.json
+          if-no-files-found: error
+          retention-days: 14
