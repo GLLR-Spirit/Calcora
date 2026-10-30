@@ -1,5 +1,3 @@
-import math
-
 import pytest
 
 from calcora.analytics import describe
