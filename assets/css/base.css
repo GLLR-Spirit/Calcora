@@ -400,3 +400,6 @@ button:disabled{cursor:not-allowed;opacity:.55;transform:none}
 @media(max-width:760px){.site-header{align-items:flex-start}.site-nav{justify-content:flex-end}.task-grid{gap:10px}.task-card{padding:16px;gap:11px}}
 @media(max-width:560px){.site-header{flex-direction:column;align-items:stretch}.site-nav{justify-content:flex-start}.task-grid{grid-template-columns:1fr}.task-card{min-height:100px}.home-about{align-items:flex-start}.home-about .section-link{white-space:normal}}
 @media(prefers-reduced-motion:reduce){.task-card{transition:none}.task-card:hover{transform:none}}
+
+/* Keep rich category cards in normal block flow; flex is only for short label cards. */
+.category-grid .card:has(>h3){display:block;min-height:0}
