@@ -1,31 +1,73 @@
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Explore Calcora's current calculation tools and follow the finance tools roadmap.">
-  <title>Finance tools — Calcora</title>
-  <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/theme-light.css" id="theme-stylesheet">
-<link rel="canonical" href="https://gllr-spirit.github.io/Calcora/calculators/finance/"><meta property="og:type" content="website"><meta property="og:title" content="Finance tools — Calcora"><meta property="og:description" content="Explore Calcora"><meta property="og:url" content="https://gllr-spirit.github.io/Calcora/calculators/finance/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Finance tools — Calcora","description":"Explore Calcora","url":"https://gllr-spirit.github.io/Calcora/calculators/finance/","applicationCategory":"EducationalApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script></head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Free simple interest, compound interest and loan repayment calculators. Compare totals, interest costs and monthly payments with transparent formulas.">
+<title>Finance calculators — Interest and loan tools | Calcora</title>
+<link rel="stylesheet" href="../../assets/css/base.css"><link rel="stylesheet" href="../../assets/css/theme-light.css" id="theme-stylesheet">
+<link rel="canonical" href="https://gllr-spirit.github.io/Calcora/calculators/finance/">
+<meta property="og:type" content="website"><meta property="og:title" content="Free finance calculators — Calcora"><meta property="og:description" content="Calculate simple and compound interest and estimate monthly loan payments using transparent formulas."><meta property="og:url" content="https://gllr-spirit.github.io/Calcora/calculators/finance/"><meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Calcora Finance Calculators","description":"Free simple interest, compound interest and loan repayment calculators with transparent formulas.","url":"https://gllr-spirit.github.io/Calcora/calculators/finance/","applicationCategory":"FinanceApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script defer src="../../assets/js/finance-math.js"></script><script defer src="../../assets/js/finance-tools.js"></script>
+</head>
 <body>
-  <header><a class="brand" href="../../index.html">◉ Calcora</a><nav><a href="../../index.html">Home</a></nav></header>
-  <main class="page">
-    <p><a href="../../index.html">Home</a> / Finance</p>
-    <h1>Finance tools</h1>
-    <p>This category is being built. Dedicated budget, interest, loan and currency calculators are not available yet, so this page links to existing tools without presenting planned features as finished.</p>
-    <aside><b>Finance calculator roadmap</b><p>Planned topics include budgeting, simple and compound interest, loan estimates, and currency conversions with clearly stated update dates and sources.</p></aside>
-    <section>
-      <h2>Useful tools available now</h2>
-      <div class="grid">
-        <a class="card" href="../math/percentage.html"><h3>Percentage calculator</h3><p>Work out a percentage of a value.</p></a>
-        <a class="card" href="../conversions/units.html"><h3>Unit converter</h3><p>Convert common metric units; this does not convert currencies.</p></a>
-        <a class="card" href="../grades/average.html"><h3>Weighted average</h3><p>Calculate a weighted average using values and coefficients.</p></a>
-      </div>
-    </section>
-    <p><a class="primary" href="../../index.html">Explore all Calcora tools</a></p>
-  </main>
-  <footer><span>© <span id="year"></span> Calcora</span><span><a href="../../pages/about.html">About</a> · <a href="../../pages/privacy.html">Privacy</a></span></footer>
-  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
-</body>
-</html>
+<header><a class="brand" href="../../index.html">◉ Calcora</a><nav><label class="sr-only" for="language-select" data-i18n="language">Language</label><select id="language-select" aria-label="Language"><option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option></select> <button id="theme-toggle" type="button" aria-label="Toggle theme">☾</button></nav></header>
+<main class="page">
+<p><a href="../../index.html" data-i18n="home">Home</a> / <span data-i18n="finance">Finance</span></p>
+<h1 data-i18n="title">Finance calculators</h1>
+<p data-i18n="intro">Estimate interest and loan repayments with transparent formulas. Results are estimates, not financial advice or lender offers.</p>
+<aside><b data-i18n="disclaimerTitle">Before you use these estimates</b><p data-i18n="disclaimer">The calculators do not include taxes, fees, insurance, variable rates or lender-specific rules. Confirm all terms with the relevant institution. No live currency conversion is provided.</p></aside>
+
+<section aria-labelledby="simple-title">
+<h2 id="simple-title" data-i18n="simpleTitle">Simple interest</h2>
+<p data-i18n="simpleHelp">Calculate interest that is applied only to the original principal.</p>
+<form id="simple-form">
+<div class="row">
+<label class="field"><span data-i18n="principal">Principal amount</span><input id="simple-principal" type="number" min="0.000001" step="any" value="10000" required></label>
+<label class="field"><span data-i18n="annualRate">Annual interest rate (%)</span><input id="simple-rate" type="number" min="0" step="any" value="5" required></label>
+</div>
+<label class="field"><span data-i18n="years">Duration (years)</span><input id="simple-years" type="number" min="0.000001" step="any" value="3" required></label>
+<button class="primary" type="submit" data-i18n="calculateSimple">Calculate simple interest</button>
+</form><div id="simple-result" class="result" role="status" aria-live="polite" hidden></div>
+<p class="student-help"><span data-i18n="formula">Formula</span>: <code>I = P × r × t ÷ 100</code></p>
+</section>
+
+<section aria-labelledby="compound-title">
+<h2 id="compound-title" data-i18n="compoundTitle">Compound interest</h2>
+<p data-i18n="compoundHelp">Calculate growth when interest is added to the balance at regular intervals.</p>
+<form id="compound-form">
+<div class="row">
+<label class="field"><span data-i18n="principal">Principal amount</span><input id="compound-principal" type="number" min="0.000001" step="any" value="10000" required></label>
+<label class="field"><span data-i18n="annualRate">Annual interest rate (%)</span><input id="compound-rate" type="number" min="0" step="any" value="5" required></label>
+</div>
+<div class="row">
+<label class="field"><span data-i18n="years">Duration (years)</span><input id="compound-years" type="number" min="0.000001" step="any" value="3" required></label>
+<label class="field"><span data-i18n="frequency">Compounding frequency</span><select id="compound-frequency"><option value="1" data-i18n="annually">Annually</option><option value="4" data-i18n="quarterly">Quarterly</option><option value="12" selected data-i18n="monthly">Monthly</option><option value="365" data-i18n="daily">Daily</option></select></label>
+</div>
+<button class="primary" type="submit" data-i18n="calculateCompound">Calculate compound interest</button>
+</form><div id="compound-result" class="result" role="status" aria-live="polite" hidden></div>
+<p class="student-help"><span data-i18n="formula">Formula</span>: <code>A = P × (1 + r ÷ n)^(n × t)</code></p>
+</section>
+
+<section aria-labelledby="loan-title">
+<h2 id="loan-title" data-i18n="loanTitle">Loan repayment estimate</h2>
+<p data-i18n="loanHelp">Estimate a fixed monthly payment for a loan with a constant annual rate.</p>
+<form id="loan-form">
+<div class="row">
+<label class="field"><span data-i18n="loanAmount">Loan amount</span><input id="loan-principal" type="number" min="0.000001" step="any" value="100000" required></label>
+<label class="field"><span data-i18n="annualRate">Annual interest rate (%)</span><input id="loan-rate" type="number" min="0" step="any" value="6" required></label>
+</div>
+<label class="field"><span data-i18n="months">Repayment period (months)</span><input id="loan-months" type="number" min="1" step="1" value="60" required></label>
+<button class="primary" type="submit" data-i18n="calculateLoan">Estimate monthly payment</button>
+</form><div id="loan-result" class="result" role="status" aria-live="polite" hidden></div>
+<p class="student-help"><span data-i18n="formula">Formula</span>: <code>M = P × i ÷ (1 − (1 + i)^−n)</code></p>
+</section>
+
+<section><h2 data-i18n="related">Related tools</h2><div class="grid">
+<a class="card" href="../math/percentage.html"><h3 data-i18n="percentage">Percentage calculator</h3><p data-i18n="percentageHelp">Calculate a percentage of a value.</p></a>
+<a class="card" href="../conversions/units.html"><h3 data-i18n="units">Unit converter</h3><p data-i18n="unitsHelp">Convert metric units. This does not convert currencies.</p></a>
+<a class="card" href="../grades/average.html"><h3 data-i18n="average">Weighted average</h3><p data-i18n="averageHelp">Calculate a weighted average using values and coefficients.</p></a>
+</div></section>
+</main>
+<footer><span>© <span id="year"></span> Calcora</span><span><a href="../../pages/about.html" data-i18n="about">About</a> · <a href="../../pages/privacy.html" data-i18n="privacy">Privacy</a></span></footer>
+</body></html>
