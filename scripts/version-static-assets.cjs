@@ -12,7 +12,7 @@ function versionAssetReferences(source, version) {
     throw new Error("Asset version must contain only letters, numbers, dots, underscores or hyphens.");
   }
 
-  return source.replace(/(["'])(?!https?:|\/\/|data:|#)([^"'\\s]+?\\.(?:css|js))(?:\\?[^"']*)?\\1/g,
+  return source.replace(/(["'])(?!https?:|\/\/|data:|#)([^"'\s]+?\.(?:css|js))(?:\?[^"']*)?\1/g,
     (match, quote, assetPath) => {
       if (/^(?:data:|https?:|\/\/|mailto:|tel:|javascript:)/i.test(assetPath)) return match;
       return quote + assetPath + "?v=" + version + quote;
