@@ -1,0 +1,13 @@
+[
+  { "name": "simple-integers", "kind": "simple", "values": ["10", "14", "18"], "expected": "14" },
+  { "name": "simple-decimals", "kind": "simple", "values": ["10.5", "11.5"], "expected": "11" },
+  { "name": "weighted-standard", "kind": "weighted", "values": ["12", "14"], "weights": ["2", "3"], "expected": "13.2" },
+  { "name": "weighted-fractional-coefficients", "kind": "weighted", "values": ["10", "12"], "weights": ["0.5", "1.5"], "expected": "11.5" },
+  { "name": "weighted-single-value", "kind": "weighted", "values": ["7.25"], "weights": ["4"], "expected": "7.25" },
+  { "name": "simple-empty", "kind": "simple", "values": [], "expected": null },
+  { "name": "weighted-empty", "kind": "weighted", "values": [], "weights": [], "expected": null },
+  { "name": "weighted-zero-coefficient", "kind": "weighted", "values": ["12"], "weights": ["0"], "expected": null },
+  { "name": "weighted-negative-coefficient", "kind": "weighted", "values": ["12"], "weights": ["-1"], "expected": null },
+  { "name": "weighted-invalid-value", "kind": "weighted", "values": ["invalid"], "weights": ["1"], "expected": null },
+  { "name": "weighted-non-finite-value", "kind": "weighted", "values": ["Infinity"], "weights": ["1"], "expected": null }
+]
