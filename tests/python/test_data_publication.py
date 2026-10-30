@@ -1,5 +1,6 @@
 import pytest
 
+
 from calcora.data.publish import build_publication_resource
 from calcora.validators.json_data import load_json, validate_json_object
 
