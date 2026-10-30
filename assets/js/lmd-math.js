@@ -16,10 +16,10 @@ function calculate(rows,passMark=10){
   if(!row||typeof row!=="object"||Array.isArray(row))return {valid:false,reason:"row"};
   const name=String(row.name??"").trim(),ue=String(row.ue??"").trim(),semester=row.semester;
   const blank=(v)=>v===null||v===undefined||String(v).trim()==="";
-  const cc=blank(row.cc)?null:number(row.cc),exam=blank(row.exam)?null:number(row.exam);
+  const ccBlank=blank(row.cc),examBlank=blank(row.exam),cc=ccBlank?null:number(row.cc),exam=examBlank?null:number(row.exam);
   const ccWeight=number(row.ccW),examWeight=number(row.examW),moduleCoefficient=number(row.mc),ueCoefficient=number(row.uc),credits=number(row.credits??0);
   if(!name&&!ue&&cc===null&&exam===null)continue;
-  if(!name||!ue||!["S1","S2"].includes(semester)||ccWeight===null||examWeight===null||moduleCoefficient===null||ueCoefficient===null||credits===null||ccWeight<0||examWeight<0||moduleCoefficient<=0||ueCoefficient<=0||credits<0||(cc!==null&&(cc<0||cc>20))||(exam!==null&&(exam<0||exam>20))||(cc===null&&exam===null)||((cc===null||ccWeight===0)&&(exam===null||examWeight===0)))return {valid:false,reason:"module"};
+  if(!name||!ue||!["S1","S2"].includes(semester)||(!ccBlank&&cc===null)||(!examBlank&&exam===null)||ccWeight===null||examWeight===null||moduleCoefficient===null||ueCoefficient===null||credits===null||ccWeight<0||examWeight<0||moduleCoefficient<=0||ueCoefficient<=0||credits<0||(cc!==null&&(cc<0||cc>20))||(exam!==null&&(exam<0||exam>20))||(cc===null&&exam===null)||((cc===null||ccWeight===0)&&(exam===null||examWeight===0)))return {valid:false,reason:"module"};
   const assessments=[];if(cc!==null&&ccWeight>0)assessments.push({value:cc,weight:ccWeight});if(exam!==null&&examWeight>0)assessments.push({value:exam,weight:examWeight});
   const moduleAverage=average(assessments);if(moduleAverage===null)return {valid:false,reason:"overflow"};
   modules.push({name,ue,semester,average:moduleAverage,moduleCoefficient,ueCoefficient,credits});
