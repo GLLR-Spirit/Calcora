@@ -1,12 +1,16 @@
 """Command-line interface for generating Calcora exercise resources."""
 from __future__ import annotations
+
 import argparse
+
 from . import export_exercises_pdf, export_question_bank, generate_exercises
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Generate Calcora educational resources.")
-    parser.add_argument("--topic", choices=("simple_average", "weighted_average"), default="simple_average")
+    parser.add_argument(
+        "--topic", choices=("simple_average", "weighted_average"), default="simple_average"
+    )
     parser.add_argument("--difficulty", choices=("easy", "medium", "hard"), default="easy")
     parser.add_argument("--count", type=int, default=5)
     parser.add_argument("--seed", type=int, default=None)

@@ -1,10 +1,12 @@
 """JSON question-bank and PDF worksheet exporters."""
 from __future__ import annotations
+
 import json
+from collections.abc import Iterable
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Iterable
 from xml.sax.saxutils import escape
+
 from .generator import Exercise
 
 
@@ -40,8 +42,8 @@ def export_exercises_pdf(
         raise ValueError("at least one exercise is required")
     try:
         from reportlab.lib.pagesizes import A4
-        from reportlab.lib.units import mm
         from reportlab.lib.styles import getSampleStyleSheet
+        from reportlab.lib.units import mm
         from reportlab.platypus import PageBreak, Paragraph, SimpleDocTemplate, Spacer
     except ImportError as exc:
         raise RuntimeError(
@@ -69,9 +71,14 @@ def export_exercises_pdf(
             story.append(Paragraph(f"Résultat : {escape(item.answer)}", styles["BodyText"]))
             story.append(Spacer(1, 4 * mm))
     document = SimpleDocTemplate(
-        str(destination), pagesize=A4, rightMargin=18 * mm, leftMargin=18 * mm,
-        topMargin=18 * mm, bottomMargin=18 * mm,
-        title="Calcora - Fiche d'exercices", author="Calcora",
+        str(destination),
+        pagesize=A4,
+        rightMargin=18 * mm,
+        leftMargin=18 * mm,
+        topMargin=18 * mm,
+        bottomMargin=18 * mm,
+        title="Calcora - Fiche d'exercices",
+        author="Calcora",
     )
     document.build(story)
     return destination

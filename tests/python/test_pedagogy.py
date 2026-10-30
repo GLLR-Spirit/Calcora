@@ -2,7 +2,9 @@ import json
 import subprocess
 import sys
 from decimal import Decimal
+
 import pytest
+
 from calcora.pedagogy import export_exercises_pdf, export_question_bank, generate_exercises
 
 
@@ -67,9 +69,24 @@ def test_pdf_export_can_omit_corrections(tmp_path) -> None:
 def test_cli_exports_json(tmp_path) -> None:
     output = tmp_path / "cli-bank.json"
     result = subprocess.run(
-        [sys.executable, "-m", "calcora.pedagogy", "--topic", "weighted_average",
-         "--count", "2", "--seed", "11", "--format", "json", "--output", str(output)],
-        check=True, capture_output=True, text=True,
+        [
+            sys.executable,
+            "-m",
+            "calcora.pedagogy",
+            "--topic",
+            "weighted_average",
+            "--count",
+            "2",
+            "--seed",
+            "11",
+            "--format",
+            "json",
+            "--output",
+            str(output),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
     )
     assert "2 exercises exported" in result.stdout
     assert json.loads(output.read_text(encoding="utf-8"))["count"] == 2

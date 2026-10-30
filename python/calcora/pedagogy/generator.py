@@ -1,5 +1,6 @@
 """Deterministic exercise generation for Calcora's average topics."""
 from __future__ import annotations
+
 import random
 from dataclasses import asdict, dataclass
 from decimal import Decimal
@@ -59,7 +60,10 @@ def generate_exercises(
         else:
             weights = [rng.randint(1, 5 if difficulty == "easy" else 10) for _ in values]
             numerator = sum(
-                (Decimal(value) * Decimal(weight) for value, weight in zip(values, weights, strict=True)),
+                (
+                    Decimal(value) * Decimal(weight)
+                    for value, weight in zip(values, weights, strict=True)
+                ),
                 Decimal(0),
             )
             denominator = sum(weights)
