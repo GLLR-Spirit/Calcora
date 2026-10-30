@@ -2,28 +2,81 @@ name: Calcora Python quality
 
 on:
   pull_request:
-    branches: ["main"]
-  push:
     branches: ["main", "feature/python-core", "feature/data-statistics"]
+  push:
+    branches: ["main", "feature/python-core", "feature/data-statistics", "feature/github-automation"]
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: python-quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   python-quality:
+    name: Python 3.12 · Ruff + pytest
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: "pip"
+
+      - name: Prepare report directory
+        run: mkdir -p reports
+
       - name: Install Python development dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
+
       - name: Check Python code style
-        run: ruff check python tests/python
-      - name: Run Python tests
-        run: pytest tests/python -v
+        run: ruff check python tests/python --output-format=json > reports/ruff.json
+
+      - name: Run Python test suite
+        run: pytest tests/python -v --junitxml=reports/python-tests.xml
+
+      - name: Add test summary to GitHub Actions
+        if: always()
+        env:
+          REPORT_DIR: reports
+        run: |
+          python - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          report = Path(os.environ["REPORT_DIR"]) / "python-tests.xml"
+          summary = Path(os.environ["GITHUB_STEP_SUMMARY"])
+          lines = ["## Calcora — Python test report", ""]
+          if report.exists():
+              root = ET.parse(report).getroot()
+              suites = [root] if root.tag == "testsuite" else list(root.findall("testsuite"))
+              totals = {key: sum(int(suite.attrib.get(key, 0)) for suite in suites)
+                        for key in ("tests", "failures", "errors", "skipped")}
+              lines.extend([
+                  f"- Tests: **{totals['tests']}**",
+                  f"- Échecs: **{totals['failures']}**",
+                  f"- Erreurs: **{totals['errors']}**",
+                  f"- Ignorés: **{totals['skipped']}**",
+              ])
+          else:
+              lines.append("Le rapport JUnit XML n'a pas été généré (installation ou exécution interrompue).")
+          ruff_report = Path(os.environ["REPORT_DIR"]) / "ruff.json"
+          lines.extend(["", f"- Rapport Ruff JSON : {'disponible' if ruff_report.exists() else 'non généré'}"])
+          summary.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+
+      - name: Upload Python quality reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: calcora-python-quality-reports
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 14
