@@ -26,6 +26,8 @@ function hasAccessibleText(value) {
 function hasAccessibleName(tag, content = "") {
   return hasAccessibleText(attribute(tag, "aria-label")) ||
     hasAccessibleText(attribute(tag, "aria-labelledby")) ||
+    hasAccessibleText(attribute(tag, "data-i")) ||
+    hasAccessibleText(attribute(tag, "data-i18n")) ||
     hasAccessibleText(content) ||
     hasAccessibleText(attribute(tag, "value")) ||
     [...content.matchAll(/<img\b[^>]*>/gi)].some((match) => hasAccessibleText(attribute(match[0], "alt")));
