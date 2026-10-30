@@ -89,9 +89,7 @@ const internalLinks = new Set();
     await firstToolLink.click();
     await page.goBack({ waitUntil: "domcontentloaded" });
     await page.waitForFunction(() => document.querySelector("#recent-tools") && !document.querySelector("#recent-tools").hidden);
-    assert.match(await page.locator("#recent-list").innerText(), new RegExp(firstToolTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\    await page.locator('.discovery-filter[data-category="education"]').click();
-    assert.equal(await page.locator('.discovery-filter[data-category="education"]').getAttribute("aria-pressed"), "true", "category filter should activate");
-")), "recently-used history should record the opened tool");
+    assert.ok((await page.locator("#recent-list").innerText()).includes(firstToolTitle), "recently-used history should record the opened tool");
     await page.locator("#clear-recent").click();
     assert.equal(await page.locator("#recent-tools").isVisible(), false, "clear history should hide the recently-used section");
 
@@ -107,16 +105,13 @@ const internalLinks = new Set();
           content: document.documentElement.scrollWidth,
           direction: document.documentElement.dir
         }));
-        if (layout.content > layout.viewport + 2) {
-          failures.push("homepage " + language + " overflows at " + width + "px (" + layout.content + "px content vs " + layout.viewport + "px viewport)");
-        }
+        if (layout.content > layout.viewport + 2) failures.push("homepage " + language + " overflows at " + width + "px (" + layout.content + "px content vs " + layout.viewport + "px viewport)");
         assert.equal(layout.direction, language === "ar" ? "rtl" : "ltr", "document direction should follow the selected language");
-        assert.ok((await page.locator("#tool-search").isVisible()), "homepage search should remain visible in " + language);
-        assert.ok((await page.locator(".discovery-toolbar").isVisible()), "category filters should remain visible in " + language);
+        assert.ok(await page.locator("#tool-search").isVisible(), "homepage search should remain visible in " + language);
+        assert.ok(await page.locator(".discovery-toolbar").isVisible(), "category filters should remain visible in " + language);
         await page.screenshot({ path: "artifacts/home-" + language + "-" + width + ".png", fullPage: true });
       }
     }
-
     const faqUrl = new URL("pages/faq.html", base).href;
     await page.goto(faqUrl, { waitUntil: "domcontentloaded" });
     assert.equal(await page.locator("details.faq-item").count(), 8, "FAQ should display all eight questions");
