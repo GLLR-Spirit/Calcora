@@ -38,7 +38,7 @@ function expectedCanonical(relativePath) {
 }
 
 function findMetaTags(html, attribute, value) {
-  return [...html.matchAll(/<meta\\b[^>]*>/gi)]
+  return [...html.matchAll(/<meta\b[^>]*>/gi)]
     .map((match) => match[0])
     .filter((tag) => getAttribute(tag, attribute) === value);
 }
@@ -52,11 +52,11 @@ test("every published HTML page has one canonical URL and complete Open Graph me
   for (const file of pages) {
     const relative = path.relative(ROOT, file).split(path.sep).join("/");
     const html = fs.readFileSync(file, "utf8");
-    const title = html.match(/<title\\b[^>]*>([\\s\\S]*?)<\\/title>/i)?.[1]?.replace(/<[^>]*>/g, "").replace(/\\s+/g, " ").trim();
+    const title = html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
     const descriptionTags = findMetaTags(html, "name", "description");
     const description = descriptionTags.length === 1 ? getAttribute(descriptionTags[0], "content") : null;
-    const canonicalTags = [...html.matchAll(/<link\\b[^>]*>/gi)].map((match) => match[0])
-      .filter((tag) => (getAttribute(tag, "rel") || "").toLowerCase().split(/\\s+/).includes("canonical"));
+    const canonicalTags = [...html.matchAll(/<link\b[^>]*>/gi)].map((match) => match[0])
+      .filter((tag) => (getAttribute(tag, "rel") || "").toLowerCase().split(/\s+/).includes("canonical"));
     const expected = expectedCanonical(relative);
 
     assert.ok(title, relative + " must have a non-empty title");
