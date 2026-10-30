@@ -88,17 +88,31 @@ $("make-citation").addEventListener("click",makeCitation);$("copy-citation").add
 $("pdf-action").addEventListener("change",()=>{const action=$("pdf-action").value;$("pdf-range-wrap").hidden=action!=="split";$("pdf-rotation-wrap").hidden=action!=="rotate"});
 function downloadBytes(bytes,name){const blob=new Blob([bytes],{type:"application/pdf"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 const PDF_LIMITS={fileBytes:20*1024*1024,fileCount:8,pages:500};
+const PDF_LIBRARY_URL="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js";
+let pdfLibraryPromise=null;
+function loadPdfLibrary(){
+ if(window.PDFLib)return Promise.resolve(window.PDFLib);
+ if(pdfLibraryPromise)return pdfLibraryPromise;
+ pdfLibraryPromise=new Promise((resolve,reject)=>{
+  const script=document.createElement("script");script.src=PDF_LIBRARY_URL;script.async=true;
+  script.onload=()=>{if(window.PDFLib)resolve(window.PDFLib);else{pdfLibraryPromise=null;reject(new Error("PDF library did not initialize"))}};
+  script.onerror=()=>{pdfLibraryPromise=null;script.remove();reject(new Error("PDF library could not be loaded"))};
+  document.head.appendChild(script);
+ });
+ return pdfLibraryPromise;
+}
+window.CALCORA_LOAD_PDF_LIBRARY=loadPdfLibrary;
 $("process-pdf").addEventListener("click",async()=>{
  const files=[...$("pdf-files").files],status=$("pdf-status"),button=$("process-pdf");
  if(!files.length){status.textContent=tr("choosePdf");return}
  if(files.length>PDF_LIMITS.fileCount){status.textContent=tr("pdfTooManyFiles");return}
  if(files.some(file=>!(/\.pdf$/i.test(file.name)||file.type==="application/pdf"))){status.textContent=tr("pdfInvalidFile");return}
  if(files.some(file=>file.size>PDF_LIMITS.fileBytes)){status.textContent=tr("pdfTooLarge");return}
- if(!window.PDFLib){status.textContent=tr("pdfLibraryMissing");return}
- const {PDFDocument,degrees}=window.PDFLib;
+ 
  status.textContent=tr("codeRunning");button.disabled=true;
  try{
-  const action=$("pdf-action").value;
+
+  const {PDFDocument,degrees}=await loadPdfLibrary();  const action=$("pdf-action").value;
   if(action==="merge"){
    const out=await PDFDocument.create();let totalPages=0;
    for(const file of files){
@@ -127,7 +141,7 @@ $("process-pdf").addEventListener("click",async()=>{
    }
   }
   status.textContent=tr("pdfSuccess");
- }catch(error){status.textContent=tr("pdfError")+" ("+String(error&&error.message||error).slice(0,160)+")"}
+ }catch(error){status.textContent=!window.PDFLib?tr("pdfLibraryMissing"):tr("pdfError")+" ("+String(error&&error.message||error).slice(0,160)+")"}
  finally{button.disabled=false}
 });
 setLanguage(preferredLanguage);

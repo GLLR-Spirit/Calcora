@@ -217,6 +217,9 @@ const internalLinks = new Set();
     await page.locator("#citation-url").fill("https://example.org");
     await page.locator("#make-citation").click();
     assert.match(await page.locator("#citation-result").innerText(), /Testing Learning Tools/, "citation helper should format entered title");
+    assert.equal(await page.evaluate(() => !!window.PDFLib), false, "PDF library should not load during initial page startup");
+    await page.waitForFunction(() => typeof window.CALCORA_LOAD_PDF_LIBRARY === "function");
+    await page.evaluate(async () => { await window.CALCORA_LOAD_PDF_LIBRARY(); });
     await page.waitForFunction(() => !!window.PDFLib, { timeout: 8000 });
     const samplePdfBytes = await page.evaluate(async () => {
       const doc = await window.PDFLib.PDFDocument.create();
