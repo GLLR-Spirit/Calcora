@@ -125,25 +125,25 @@ test("calculator form controls have accessible names and result regions announce
   for (const file of walk(calculatorRoot)) {
     const relative = path.relative(root, file).split(path.sep).join("/");
     const html = fs.readFileSync(file, "utf8");
-    const ids = new Set([...html.matchAll(/\\bid=["']([^"']+)["']/gi)].map(match => match[1]));
-    const explicitLabels = new Set([...html.matchAll(/<label\\b[^>]*\\bfor=["']([^"']+)["'][^>]*>/gi)].map(match => match[1]));
+    const ids = new Set([...html.matchAll(/\bid=["']([^"']+)["']/gi)].map(match => match[1]));
+    const explicitLabels = new Set([...html.matchAll(/<label\b[^>]*\bfor=["']([^"']+)["'][^>]*>/gi)].map(match => match[1]));
     const wrappedControls = new Set();
-    for (const match of html.matchAll(/<label\\b[^>]*>([\\s\\S]*?)<\\/label>/gi)) {
-      for (const control of match[1].matchAll(/<(?:input|select|textarea)\\b([^>]*)>/gi)) {
-        const id = control[1].match(/\\bid=["']([^"']+)["']/i)?.[1];
+    for (const match of html.matchAll(/<label\b[^>]*>([\s\S]*?)<\/label>/gi)) {
+      for (const control of match[1].matchAll(/<(?:input|select|textarea)\b([^>]*)>/gi)) {
+        const id = control[1].match(/\bid=["']([^"']+)["']/i)?.[1];
         if (id) wrappedControls.add(id);
       }
     }
-    for (const control of html.matchAll(/<(input|select|textarea)\\b([^>]*)>/gi)) {
+    for (const control of html.matchAll(/<(input|select|textarea)\b([^>]*)>/gi)) {
       const attrs = control[2];
-      const id = attrs.match(/\\bid=["']([^"']+)["']/i)?.[1];
-      const hasAriaName = /\\baria-label=["'][^"']+["']/i.test(attrs) || /\\baria-labelledby=["'][^"']+["']/i.test(attrs);
+      const id = attrs.match(/\bid=["']([^"']+)["']/i)?.[1];
+      const hasAriaName = /\baria-label=["'][^"']+["']/i.test(attrs) || /\baria-labelledby=["'][^"']+["']/i.test(attrs);
       const hasLabel = id && (explicitLabels.has(id) || wrappedControls.has(id));
       assert.ok(hasAriaName || hasLabel, relative + " contains an input/select/textarea without an accessible name: " + control[0]);
     }
-    for (const result of html.matchAll(/<[^>]+class=["'][^"']*\\bresult\\b[^"']*["'][^>]*>/gi)) {
-      assert.match(result[0], /\\brole=["']status["']/i, relative + " result region needs role=status");
-      assert.match(result[0], /\\baria-live=["']polite["']/i, relative + " result region needs polite announcements");
+    for (const result of html.matchAll(/<[^>]+class=["'][^"']*\bresult\b[^"']*["'][^>]*>/gi)) {
+      assert.match(result[0], /\brole=["']status["']/i, relative + " result region needs role=status");
+      assert.match(result[0], /\baria-live=["']polite["']/i, relative + " result region needs polite announcements");
     }
   }
 });
