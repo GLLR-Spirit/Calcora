@@ -5,6 +5,8 @@ on:
   pull_request:
     paths:
       - '.github/workflows/lighthouse-baseline.yml'
+      - '**.html'
+      - 'favicon.svg'
 
 permissions:
   contents: read
