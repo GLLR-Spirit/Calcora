@@ -4,8 +4,11 @@ import sys
 from decimal import Decimal
 
 import pytest
-
-from calcora.pedagogy import export_exercises_pdf, export_question_bank, generate_exercises
+from calcora.pedagogy import (
+    export_exercises_pdf,
+    export_question_bank,
+    generate_exercises,
+)
 
 
 def test_generation_is_reproducible() -> None:
