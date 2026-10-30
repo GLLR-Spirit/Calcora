@@ -11,6 +11,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: lighthouse-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
@@ -22,6 +26,14 @@ jobs:
           node-version: 22
       - name: Set up Chrome
         uses: browser-actions/setup-chrome@v1
+      - name: Serve the pull request branch locally
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory . > /tmp/calcora-http.log 2>&1 &
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4173/ > /dev/null
       - name: Measure representative pages
         run: |
           mkdir -p lighthouse-reports
@@ -34,10 +46,10 @@ jobs:
               --output-path="lighthouse-reports/$name.json" \
               --quiet
           done <<'PAGES'
-          home|https://gllr-spirit.github.io/Calcora/
-          average|https://gllr-spirit.github.io/Calcora/calculators/grades/average.html
-          learning-lab|https://gllr-spirit.github.io/Calcora/learning-lab.html
-          finance|https://gllr-spirit.github.io/Calcora/calculators/finance/index.html
+          home|http://127.0.0.1:4173/
+          average|http://127.0.0.1:4173/calculators/grades/average.html
+          learning-lab|http://127.0.0.1:4173/learning-lab.html
+          finance|http://127.0.0.1:4173/calculators/finance/index.html
           PAGES
       - name: Add Lighthouse summary to workflow
         run: |
