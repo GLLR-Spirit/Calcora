@@ -61,3 +61,9 @@ test("deployment rewrite scans HTML and JavaScript but skips tests and tooling",
 test("rejects unsafe asset version values", () => {
   assert.throws(() => versionAssetReferences('load("app.js")', "bad version"), /Asset version/);
 });
+
+test("replaces an older release version instead of stacking query parameters", () => {
+  const first = versionAssetReferences('<script src="app.js"></script>', "release-1");
+  const second = versionAssetReferences(first, "release-2");
+  assert.equal(second, '<script src="app.js?v=release-2"></script>');
+});
