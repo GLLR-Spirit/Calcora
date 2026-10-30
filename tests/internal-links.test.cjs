@@ -219,6 +219,13 @@ test("all local HTML fragment links resolve to an existing id or named anchor", 
         ...[...targetHtml.matchAll(/\bid\s*=\s*(["'])(.*?)\1/gi)].map(match => match[2]),
         ...[...targetHtml.matchAll(/<a\b[^>]*\bname\s*=\s*(["'])(.*?)\1[^>]*>/gi)].map(match => match[2])
       ]);
+      // Study Hub creates its tool-card anchors from the tool configuration at runtime.
+      if (path.basename(target) === "study-hub.html") {
+        const hubScript = fs.readFileSync(path.join(root, "assets/js/study-hub.js"), "utf8");
+        if (/card\.id\s*=\s*["']tool-["']\s*\+\s*tool\.id/.test(hubScript)) {
+          for (const match of hubScript.matchAll(/\bid\s*:\s*["']([^"']+)["']/g)) anchors.add("tool-" + match[1]);
+        }
+      }
       if (!anchors.has(fragment)) {
         missing.push({
           page: path.relative(root, sourceFile).replace(/\\/g, "/"),
