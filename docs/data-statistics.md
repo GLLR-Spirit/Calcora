@@ -31,10 +31,11 @@ accuracy.
 Install development dependencies, then run:
 
 ```bash
-python -m calcora.data.publish --input data/education-profiles.json --output exports/education-profiles.json
+PYTHONPATH=python python -m calcora.publication --output-dir .
 ```
 
-The generated file is UTF-8 JSON with a schema version, UTC generation timestamp,
-profile status counts and the validated profile catalog. Review the output and
-academic sources before publishing it. Do not commit generated exports unless
-they have been reviewed for the intended release.
+The build creates the static files consumed by `resources.html`: the validated
+profile catalog, two reproducible JSON question banks and two printable French
+PDF worksheets. Generated resources are built during CI and GitHub Pages deployment;
+they are not committed as source files. The profile catalog remains draft-only
+until its academic sources and coefficients have been independently verified.
