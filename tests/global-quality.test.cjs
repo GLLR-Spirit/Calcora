@@ -257,3 +257,40 @@ test("core calculator helpers validate averages, percentages and unit conversion
   assert.equal(math.convertUnits(String(Number.MAX_VALUE), "km", "cm").reason, "value");
   assert.equal(math.convertUnits("1", "unknown", "m").reason, "unit");
 });
+
+test("Algerian grade calculator covers weighted, simple, annual and target calculations", () => {
+  const { calculateGrade } = require("../assets/js/algeria-grade-math.js");
+  const base = { min: "0", max: "20" };
+  const weighted = calculateGrade({ ...base, type: "weighted", rows: [{ mark: "12", coefficient: "2" }, { mark: "14", coefficient: "3" }] });
+  assert.equal(weighted.valid, true); assert.equal(weighted.value, 13.2); assert.equal(weighted.label, "average");
+  const simple = calculateGrade({ ...base, type: "simple", rows: [{ mark: "12", coefficient: "1" }, { mark: "14", coefficient: "1" }] });
+  assert.equal(simple.valid, true); assert.equal(simple.value, 13); assert.equal(simple.label, "simple");
+  const annual = calculateGrade({ ...base, type: "year", semester1: "12", semester2: "14", weight1: "1", weight2: "2" });
+  assert.equal(annual.valid, true); assert.equal(annual.value, 40 / 3); assert.equal(annual.label, "annual");
+  const target = calculateGrade({ ...base, type: "target", target: "14", currentTotal: "24", completedCoefficient: "2", remainingCoefficient: "2" });
+  assert.equal(target.valid, true); assert.equal(target.value, 16); assert.equal(target.label, "need");
+  const impossible = calculateGrade({ ...base, type: "target", target: "20", currentTotal: "0", completedCoefficient: "2", remainingCoefficient: "1" });
+  assert.equal(impossible.valid, true); assert.equal(impossible.impossible, true); assert.equal(impossible.value, 60);
+});
+
+test("Algerian grade calculator rejects blank, out-of-scale and non-finite values", () => {
+  const { calculateGrade } = require("../assets/js/algeria-grade-math.js");
+  const base = { min: "0", max: "20" };
+  assert.equal(calculateGrade({ ...base, type: "weighted", rows: [] }).valid, false);
+  assert.equal(calculateGrade({ ...base, type: "weighted", rows: [{ mark: "", coefficient: "1" }] }).valid, false);
+  assert.equal(calculateGrade({ ...base, type: "weighted", rows: [{ mark: "21", coefficient: "1" }] }).valid, false);
+  assert.equal(calculateGrade({ ...base, type: "weighted", rows: [{ mark: "10", coefficient: "0" }] }).valid, false);
+  assert.equal(calculateGrade({ ...base, type: "weighted", rows: [{ mark: "20", coefficient: String(Number.MAX_VALUE) }] }).valid, false);
+  assert.equal(calculateGrade({ ...base, type: "year", semester1: "12", semester2: "14", weight1: "0", weight2: "1" }).valid, false);
+  assert.equal(calculateGrade({ ...base, type: "year", semester1: "20", semester2: "20", weight1: String(Number.MAX_VALUE), weight2: String(Number.MAX_VALUE) }).valid, false);
+  assert.equal(calculateGrade({ ...base, type: "target", target: "21", currentTotal: "0", completedCoefficient: "1", remainingCoefficient: "1" }).valid, false);
+  assert.equal(calculateGrade({ ...base, type: "target", target: "10", currentTotal: "0", completedCoefficient: "1", remainingCoefficient: "0" }).valid, false);
+  assert.equal(calculateGrade({ ...base, type: "target", target: "20", currentTotal: "0", completedCoefficient: String(Number.MAX_VALUE), remainingCoefficient: String(Number.MAX_VALUE) }).valid, false);
+  assert.equal(calculateGrade({ min: "10", max: "10", type: "simple", rows: [{ mark: "10", coefficient: "1" }] }).valid, false);
+});
+
+test("Algerian grade calculator respects a configurable mark scale", () => {
+  const { calculateGrade } = require("../assets/js/algeria-grade-math.js");
+  const result = calculateGrade({ min: "0", max: "100", type: "weighted", rows: [{ mark: "80", coefficient: "2" }, { mark: "90", coefficient: "1" }] });
+  assert.equal(result.valid, true); assert.equal(result.value, 250 / 3);
+});
