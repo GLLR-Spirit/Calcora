@@ -1,5 +1,6 @@
 """Build the JSON and PDF resources consumed by Calcora's static website."""
 from __future__ import annotations
+
 import argparse
 import json
 from pathlib import Path
