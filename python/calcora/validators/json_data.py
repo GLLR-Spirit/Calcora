@@ -1,12 +1,14 @@
 """Strict JSON loading and structural validation helpers."""
 
 import json
+from math import isfinite
 from pathlib import Path
 from typing import Any
 
 
 def load_json(path: str | Path) -> Any:
     """Load UTF-8 JSON, rejecting duplicate object keys and non-standard constants."""
+
     def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
         result: dict[str, Any] = {}
         for key, value in pairs:
@@ -41,7 +43,7 @@ def validate_json_object(value: Any, *, required_keys: set[str] | None = None) -
         if node is None or isinstance(node, (str, bool, int)):
             return
         if isinstance(node, float):
-            if node != node or abs(node) == float("inf"):
+            if not isfinite(node):
                 errors.append(f"{path} must be a finite number")
             return
         if isinstance(node, list):
