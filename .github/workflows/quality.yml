@@ -1,15 +1,23 @@
 name: Calcora quality checks
+
 on:
   pull_request:
-    branches: ["main"]
+    branches: ["main", "feature/python-core", "feature/data-statistics"]
   push:
-    branches: ["main", "feature/data-statistics"]
+    branches: ["main", "feature/data-statistics", "feature/github-automation"]
   workflow_dispatch:
+
 permissions:
   contents: read
+
+concurrency:
+  group: javascript-quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
