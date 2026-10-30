@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 from typing import Any
+
 from calcora.data.publish import build_publication_resource
 from calcora.pedagogy import export_exercises_pdf, export_question_bank, generate_exercises
 from calcora.validators.json_data import load_json
