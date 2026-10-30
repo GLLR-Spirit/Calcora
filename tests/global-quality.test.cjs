@@ -229,3 +229,31 @@ test("all interactive calculator pages have complete English, French and Arabic 
     }
   }
 });
+
+test("core calculator helpers validate averages, percentages and unit conversions", () => {
+  const context = { window: {}, document: { documentElement: { dataset: {} }, querySelector: () => null, querySelectorAll: () => [] } };
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "assets/js/calculator-pages.js"), "utf8"), context, { filename: "calculator-pages.js" });
+  const math = context.window.CALCORA_PAGE_MATH;
+  assert.ok(math, "calculator page helpers should be available for isolated tests");
+  assert.equal(math.weightedAverage([{ mark: "12", coefficient: "2" }, { mark: "15", coefficient: "3" }]), 13.8);
+  assert.equal(math.weightedAverage([{ mark: "0", coefficient: "2" }]), 0);
+  assert.equal(math.weightedAverage([{ mark: "20", coefficient: "1" }]), 20);
+  assert.equal(math.weightedAverage([]), null);
+  assert.equal(math.weightedAverage([{ mark: "", coefficient: "1" }]), null);
+  assert.equal(math.weightedAverage([{ mark: "21", coefficient: "1" }]), null);
+  assert.equal(math.weightedAverage([{ mark: "12", coefficient: "0" }]), null);
+  assert.equal(math.weightedAverage([{ mark: "20", coefficient: String(Number.MAX_VALUE) }]), null);
+  assert.equal(math.percentage("200", "15"), 30);
+  assert.equal(math.percentage("0", "15"), 0);
+  assert.equal(math.percentage("-200", "15"), -30);
+  assert.equal(math.percentage("", "15"), null);
+  assert.equal(math.percentage("Infinity", "10"), null);
+  assert.equal(math.percentage(String(Number.MAX_VALUE), String(Number.MAX_VALUE)), null);
+  assert.deepEqual({ ...math.convertUnits("1", "km", "m") }, { ok: true, value: 1000 });
+  assert.deepEqual({ ...math.convertUnits("2", "kg", "g") }, { ok: true, value: 2000 });
+  assert.deepEqual({ ...math.convertUnits("1", "L", "mL") }, { ok: true, value: 1000 });
+  assert.equal(math.convertUnits("1", "kg", "m").reason, "dimension");
+  assert.equal(math.convertUnits("", "km", "m").reason, "value");
+  assert.equal(math.convertUnits(String(Number.MAX_VALUE), "km", "cm").reason, "value");
+  assert.equal(math.convertUnits("1", "unknown", "m").reason, "unit");
+});
