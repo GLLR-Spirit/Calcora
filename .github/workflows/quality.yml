@@ -2,9 +2,9 @@ name: Calcora quality checks
 
 on:
   pull_request:
-    branches: ["main", "feature/python-core", "feature/data-statistics"]
+    branches: ["main", "feature/python-core", "feature/data-statistics", "feature/github-automation"]
   push:
-    branches: ["main", "feature/data-statistics", "feature/github-automation"]
+    branches: ["main", "feature/data-statistics", "feature/github-automation", "feature/public-site-integration"]
   workflow_dispatch:
 
 permissions:
@@ -23,6 +23,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install public resource build dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Generate JSON catalogs, question banks and PDFs for browser tests
+        run: PYTHONPATH=python python -m calcora.publication --output-dir .
       - name: Validate JavaScript syntax
         run: |
           find assets/js components locales settings -type f -name '*.js' -print0 | xargs -0 -n1 node --check

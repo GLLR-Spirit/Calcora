@@ -307,6 +307,29 @@ const internalLinks = new Set();
       if (dimensions.content > dimensions.viewport + 2) failures.push(path + " overflows horizontally on mobile (" + dimensions.content + "px content vs " + dimensions.viewport + "px viewport)");
     }
 
+    // Public learning resources: verify JSON/PDF delivery, language switching and mobile layouts.
+    for (const width of [360, 390, 768, 1365]) for (const language of ["en", "fr", "ar"]) {
+      await page.setViewportSize({ width, height: width >= 768 ? 1024 : 844 });
+      await page.goto(new URL("resources.html", base).href, { waitUntil: "domcontentloaded" });
+      await page.locator("#language-select").selectOption(language);
+      await page.waitForFunction(code => document.documentElement.lang === code, language);
+      await page.waitForFunction(() => document.querySelector("#catalog-status")?.dataset.loaded === "true");
+      const size = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth, dir: document.documentElement.dir }));
+      if (size.scroll > size.width + 2) failures.push("resources.html overflows at " + width + "px in " + language);
+      assert.equal(size.dir, language === "ar" ? "rtl" : "ltr");
+      assert.equal(await page.locator(".resource-card a").count(), 4);
+    }
+    for (const asset of ["data/public/education-profiles.json","data/public/question-banks/simple-average-easy.json","data/public/question-banks/weighted-average-medium.json"]) {
+      const response = await page.request.get(new URL(asset, base).href);
+      assert.equal(response.status(), 200, asset + " should be published");
+      assert.ok(response.headers()["content-type"]?.includes("json"));
+    }
+    for (const asset of ["resources/simple-average-practice-fr.pdf","resources/weighted-average-practice-fr.pdf"]) {
+      const response = await page.request.get(new URL(asset, base).href);
+      assert.equal(response.status(), 200, asset + " should be published");
+      assert.equal((await response.body()).subarray(0,5).toString("ascii"), "%PDF-");
+    }
+
     if (pageErrors.length) failures.push(...pageErrors.map(e => e.url + " raised JavaScript error: " + e.message));
     if (failures.length) {
       console.error("Browser smoke test failures:");
