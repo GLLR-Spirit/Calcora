@@ -24,6 +24,10 @@ jobs:
         run: |
           npm install --no-save playwright
           npx playwright install --with-deps chromium
+      - name: Apply deployment asset versioning to the browser-test copy
+        env:
+          CALCORA_ASSET_VERSION: ${{ github.sha }}
+        run: node scripts/version-static-assets.cjs .
       - name: Serve the pull request branch
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 --directory . > /tmp/calcora-http.log 2>&1 &
