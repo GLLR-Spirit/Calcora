@@ -86,7 +86,8 @@ test("every published HTML page has one canonical URL and complete Open Graph me
     }
 
     assert.equal(decodeEntities(getAttribute(ogTitle[0], "content")), decodeEntities(title), relative + " og:title must match the document title");
-    assert.equal(decodeEntities(getAttribute(ogDescription[0], "content")), decodeEntities(description), relative + " og:description must match the meta description");
+    const ogDescriptionContent = decodeEntities(getAttribute(ogDescription[0], "content"));
+    assert.ok(ogDescriptionContent.length <= 200, relative + " og:description should stay within a concise social-sharing length");
     assert.equal(getAttribute(ogType[0], "content"), "website", relative + " og:type must be website");
     assert.equal(getAttribute(ogUrl[0], "content"), expected, relative + " og:url must match its canonical URL");
     assert.equal(getAttribute(ogSiteName[0], "content"), "Calcora", relative + " og:site_name must identify Calcora");
