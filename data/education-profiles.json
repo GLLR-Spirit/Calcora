@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "profiles": [
+    {
+      "id": "primary",
+      "name": "Primary education",
+      "status": "draft",
+      "academic_year": "2026-2027",
+      "subjects": []
+    },
+    {
+      "id": "middle",
+      "name": "Middle education",
+      "status": "draft",
+      "academic_year": "2026-2027",
+      "subjects": []
+    },
+    {
+      "id": "highschool",
+      "name": "High school",
+      "status": "draft",
+      "academic_year": "2026-2027",
+      "subjects": []
+    },
+    {
+      "id": "bac",
+      "name": "Baccalaureate",
+      "status": "draft",
+      "academic_year": "2026-2027",
+      "subjects": []
+    },
+    {
+      "id": "university",
+      "name": "University LMD",
+      "status": "draft",
+      "academic_year": "2026-2027",
+      "subjects": []
+    }
+  ]
+}
