@@ -12,8 +12,8 @@ def weighted_average(
     Each item is a (value, weight) pair. Empty input, non-finite values and
     non-positive weights are rejected instead of silently producing a result.
     """
-    numerator = Decimal("0")
-    denominator = Decimal("0")
+    numerator = Decimal(0)
+    denominator = Decimal(0)
     count = 0
 
     for value, weight in values:
