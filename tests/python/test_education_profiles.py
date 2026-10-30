@@ -55,3 +55,22 @@ def test_invalid_profile_shape_is_reported() -> None:
     assert "status must be 'draft' or 'verified'" in errors
     assert "academic_year must be provided" in errors
     assert "subjects must be a list" in errors
+
+
+def test_unhashable_status_is_reported_without_crashing() -> None:
+    errors = validate_education_profile(
+        {"name": "Draft", "status": ["draft"], "academic_year": "2026-2027"}
+    )
+    assert "status must be 'draft' or 'verified'" in errors
+
+
+def test_boolean_coefficient_is_not_accepted_as_numeric() -> None:
+    errors = validate_education_profile(
+        {
+            "name": "Draft",
+            "status": "draft",
+            "academic_year": "2026-2027",
+            "subjects": [{"name": "Math", "coefficient": True}],
+        }
+    )
+    assert "subjects[0].coefficient must be a positive finite number" in errors

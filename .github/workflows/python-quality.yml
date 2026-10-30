@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: ["main"]
   push:
-    branches: ["main", "feature/python-core"]
+    branches: ["main", "feature/python-core", "feature/data-statistics"]
   workflow_dispatch:
 
 permissions:
