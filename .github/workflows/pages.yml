@@ -33,6 +33,10 @@ jobs:
       - uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Version local static asset URLs for safe cache reuse
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: node scripts/version-static-assets.cjs .
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
