@@ -19,12 +19,15 @@ From the repository root:
 
     ruff check python tests/python
     pytest tests/python -v
+    node --test tests/*.test.cjs
 
 ## Current modules
 
 - calcora.mathematics: simple and weighted average calculations.
-- calcora.validators: structural validation of education-profile metadata.
+- calcora.validators: education-profile, JSON structure and duplicate-key validation.
 - calcora.pedagogy: exercise generation, worked corrections, JSON banks and PDF worksheets.
+- calcora.analytics: dependency-free descriptive statistics.
+- calcora.data: validated static data publication.
 
 ## Generate educational resources
 
@@ -36,14 +39,18 @@ Generate a PDF worksheet with corrections:
 
     python -m calcora.pedagogy --topic weighted_average --difficulty medium --count 8 --seed 42 --format pdf --output exports/worksheet.pdf
 
-Use --without-corrections to export questions only. Topics are simple_average
-and weighted_average; difficulties are easy, medium and hard. A fixed seed
-makes generated exercises reproducible.
+Generate the validated profile catalog for static publication:
 
-The validator does not certify the official correctness or applicability of a
-grading rule. Generated exercises are synthetic practice material, not official
-exam questions, and should be reviewed before publication.
+    python -m calcora.data.publish --input data/education-profiles.json --output exports/education-profiles.json
+
+Use `--without-corrections` to export questions only. Topics are `simple_average`
+and `weighted_average`; difficulties are `easy`, `medium` and `hard`. A fixed
+seed makes exercises reproducible.
+
+The education catalog currently contains draft metadata only. Structural validation
+does not certify the official correctness or applicability of a grading rule.
+Generated exercises are synthetic practice material, not official exam questions,
+and should be reviewed before publication.
 
 Python modules run in development and CI. GitHub Pages does not execute Python.
-Future visitor-facing data should be generated as static assets and consumed by
-the existing JavaScript application.
+Generated JSON is a static artifact that can be reviewed and then served as a file.
