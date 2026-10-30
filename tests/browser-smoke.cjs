@@ -16,7 +16,7 @@ const internalLinks = new Set();
     const sitemapResponse = await page.request.get(new URL("sitemap.xml", base).href);
     assert.equal(sitemapResponse.status(), 200, "sitemap.xml should be reachable");
     const sitemap = await sitemapResponse.text();
-    const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1].trim());
+    const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => { const source = new URL(match[1].trim()); return new URL(source.pathname.replace(/^\/Calcora\//, ""), base).href; });
     assert.ok(urls.length >= 40, "sitemap should cover the site's HTML pages");
 
     for (const url of urls) {
