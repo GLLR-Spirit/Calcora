@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from calcora.data.publish import build_publication_resource
@@ -47,8 +45,13 @@ def test_invalid_profile_is_rejected() -> None:
 
 
 def test_json_structure_requires_keys_and_rejects_non_finite_numbers() -> None:
-    assert "missing required key: profiles" in validate_json_object({"schema_version": 1}, required_keys={"profiles"})
-    assert any("finite number" in error for error in validate_json_object({"value": float("nan")}))
+    assert "missing required key: profiles" in validate_json_object(
+        {"schema_version": 1}, required_keys={"profiles"}
+    )
+    assert any(
+        "finite number" in error
+        for error in validate_json_object({"value": float("nan")})
+    )
 
 
 def test_json_loader_rejects_duplicate_keys(tmp_path) -> None:
@@ -58,7 +61,7 @@ def test_json_loader_rejects_duplicate_keys(tmp_path) -> None:
         load_json(path)
 
 
-def test_repository_profile_catalog_is_valid_json(tmp_path) -> None:
+def test_repository_profile_catalog_is_valid_json() -> None:
     from pathlib import Path
 
     catalog = Path("data/education-profiles.json")
