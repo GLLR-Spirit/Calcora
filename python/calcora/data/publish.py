@@ -6,7 +6,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from calcora.analytics import describe
 from calcora.validators import validate_education_profile
 from calcora.validators.json_data import load_json, validate_json_object
 
@@ -73,7 +72,10 @@ def main() -> int:
         json.dumps(resource, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-    print(f"Published resource: {args.output} ({resource['statistics']['profile_count']} profiles)")
+    print(
+        f"Published resource: {args.output} "
+        f"({resource['statistics']['profile_count']} profiles)"
+    )
     return 0
 
 
