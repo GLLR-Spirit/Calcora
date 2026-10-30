@@ -33,12 +33,15 @@ def validate_education_profile(profile: Mapping[str, object]) -> list[str]:
             errors.append("verified profiles require an HTTPS source_url")
 
         reviewed_on = profile.get("reviewed_on")
-        try:
-            if not isinstance(reviewed_on, str):
-                raise ValueError
-            date.fromisoformat(reviewed_on)
-        except ValueError:
+        if not isinstance(reviewed_on, str):
             errors.append("verified profiles require reviewed_on in YYYY-MM-DD format")
+        else:
+            try:
+                date.fromisoformat(reviewed_on)
+            except ValueError:
+                errors.append(
+                    "verified profiles require reviewed_on in YYYY-MM-DD format"
+                )
 
     subjects = profile.get("subjects", [])
     if not isinstance(subjects, list):
