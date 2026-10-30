@@ -37,7 +37,7 @@ def build_publication_resource(source: dict[str, Any]) -> dict[str, Any]:
         profile_errors.extend(
             f"profiles[{index}]: {error}" for error in validate_education_profile(profile)
         )
-        if profile.get("status") in {"draft", "verified"}:
+        if profile.get("status") in ("draft", "verified"):
             statuses.append(profile["status"])
     if profile_errors:
         raise ValueError("; ".join(profile_errors))
