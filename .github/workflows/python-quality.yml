@@ -2,7 +2,7 @@ name: Calcora Python quality
 
 on:
   pull_request:
-    branches: ["main", "feature/python-core", "feature/data-statistics"]
+    branches: ["main", "feature/python-core", "feature/data-statistics", "feature/github-automation", "feature/public-site-integration"]
   push:
     branches: ["main", "feature/python-core", "feature/data-statistics", "feature/github-automation"]
   workflow_dispatch:

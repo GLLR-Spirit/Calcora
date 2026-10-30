@@ -58,3 +58,16 @@ correction and answer.
 
 Automated tests cover reproducibility, all supported topics and difficulty
 levels, invalid parameters, JSON content, PDF signatures and CLI execution.
+
+
+## Public website publication
+
+The `resources.html` page links to static JSON question banks and printable PDF worksheets. Build all public files with:
+
+    PYTHONPATH=python python -m calcora.publication --output-dir .
+
+The command writes `data/public/education-profiles.json`, two files under
+`data/public/question-banks/`, and two PDFs under `resources/`. GitHub Actions
+runs this build before the browser audit and before publishing the Pages artifact.
+The public page is translated into English, French and Arabic; the current PDF
+worksheets are explicitly labelled as French-language resources.

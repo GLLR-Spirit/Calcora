@@ -18,6 +18,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install static resource build dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Generate public JSON catalogs, question banks and PDF worksheets
+        run: PYTHONPATH=python python -m calcora.publication --output-dir .
       - uses: actions/setup-node@v4
         with:
           node-version: 22

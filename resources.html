@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" dir="ltr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Free Calcora educational datasets, generated practice question banks and printable average worksheets.">
+<meta name="theme-color" content="#eef2ff">
+<meta name="twitter:card" content="summary">
+<meta property="og:title" content="Learning resources — Calcora">
+<meta property="og:description" content="Free Calcora educational datasets, generated practice question banks and printable average worksheets.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gllr-spirit.github.io/Calcora/resources.html">
+<meta property="og:site_name" content="Calcora"><link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://gllr-spirit.github.io/Calcora/resources.html">
+<link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/theme-light.css" id="theme-stylesheet">
+<title>Learning resources — Calcora</title>
+<style>
+.resources-page{width:min(calc(100% - 32px),1040px);margin:clamp(24px,5vw,56px) auto 64px}
+.resources-hero{padding:clamp(24px,5vw,48px);border:1px solid var(--border);border-radius:24px;background:linear-gradient(135deg,var(--surface),var(--hero));box-shadow:var(--shadow-soft)}
+.resources-hero h1{margin:4px 0 10px;font-size:clamp(2rem,5vw,3rem);letter-spacing:-.045em}
+.resources-hero>p:not(.section-eyebrow),.resource-section>p{color:var(--muted);line-height:1.7}
+.resources-meta{font-size:.9rem}.resource-section{margin-top:24px;padding:clamp(18px,3vw,28px);border:1px solid var(--border);border-radius:20px;background:var(--surface);box-shadow:var(--shadow-soft)}
+.resource-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}.resource-heading h2{margin:0;font-size:clamp(1.2rem,3vw,1.55rem)}
+.resource-tag{flex:none;padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:var(--soft);font-size:.78rem;font-weight:800}
+.resource-stats,.resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.resource-stats span{padding:13px 15px;border:1px solid var(--border);border-radius:12px;background:var(--soft);font-weight:700}
+.resource-card{min-width:0;padding:18px;border:1px solid var(--border);border-radius:15px;background:var(--bg)}
+.resource-card h3{margin:0 0 8px;font-size:1.05rem}.resource-card p{color:var(--muted);line-height:1.6}
+.resource-download,.resource-card a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;margin-top:10px;padding:10px 14px;border-radius:11px;background:var(--accent);color:#fff;font-weight:750;text-decoration:none;overflow-wrap:anywhere}
+.resource-download:hover,.resource-card a:hover{filter:brightness(.94);color:#fff}
+.resource-notice{margin-top:24px;padding:18px 20px;border:1px solid var(--border);border-inline-start:4px solid var(--accent);border-radius:14px;background:var(--surface)}
+.resource-notice p{margin-bottom:0;color:var(--muted);line-height:1.7}
+@media(max-width:600px){.resources-page{width:calc(100% - 24px);margin:18px auto 40px}.resources-hero{padding:22px 18px;border-radius:18px}.resource-section{padding:18px 14px}.resource-grid,.resource-stats{grid-template-columns:1fr}.resource-heading{align-items:flex-start}.resource-card a,.resource-download{width:100%;text-align:center}}
+</style><script defer src="locales/en.js"></script><script defer src="locales/fr.js"></script><script defer src="locales/ar.js"></script><script defer src="assets/js/public-resources.js"></script>
+</head><body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html" aria-label="Calcora home">◉ Calcora</a><nav class="site-nav" aria-label="Main navigation">
+<a href="index.html" data-t="home">Home</a><a href="index.html#tools" data-t="tools">Tools</a><a href="pages/about.html" data-t="about">About</a>
+<label class="visually-hidden" for="language-select">Language</label><select id="language-select" aria-label="Language"><option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option></select></nav></header>
+<main id="main-content" class="resources-page">
+<section class="resources-hero"><p class="section-eyebrow" data-t="eyebrow">OPEN LEARNING MATERIALS</p><h1 data-t="title">Learning resources</h1><p data-t="intro">Browse Calcora's public datasets, generated practice questions and printable worksheets.</p><p class="resources-meta" id="catalog-status" role="status" aria-live="polite" data-t="loading">Loading the public catalog…</p></section>
+<section class="resource-section" aria-labelledby="data-title"><div class="resource-heading"><div><p class="section-eyebrow" data-t="dataEyebrow">STRUCTURED DATA</p><h2 id="data-title" data-t="dataTitle">Educational profile catalog</h2></div><span class="resource-tag">JSON</span></div><p data-t="dataDescription">A machine-readable inventory of educational levels and profile metadata. Draft entries are not official grading rules.</p><div class="resource-stats" id="profile-stats"><span>Loading…</span></div><a class="resource-download" href="data/public/education-profiles.json" download data-t="downloadCatalog">Download profile catalog (JSON)</a></section>
+<section class="resource-section" aria-labelledby="banks-title"><div class="resource-heading"><div><p class="section-eyebrow" data-t="practiceEyebrow">GENERATED PRACTICE</p><h2 id="banks-title" data-t="banksTitle">Question banks</h2></div><span class="resource-tag">JSON</span></div><p data-t="banksDescription">Synthetic exercises with worked corrections. These are practice questions, not official exam papers.</p><div class="resource-grid">
+<article class="resource-card"><h3 data-t="simpleTitle">Simple averages — easy</h3><p data-t="simpleDescription">10 beginner exercises with answers and worked steps.</p><a href="data/public/question-banks/simple-average-easy.json" download data-t="downloadJson">Download question bank (JSON)</a></article>
+<article class="resource-card"><h3 data-t="weightedTitle">Weighted averages — medium</h3><p data-t="weightedDescription">10 intermediate exercises with coefficients and worked steps.</p><a href="data/public/question-banks/weighted-average-medium.json" download data-t="downloadJson">Download question bank (JSON)</a></article></div></section>
+<section class="resource-section" aria-labelledby="pdf-title"><div class="resource-heading"><div><p class="section-eyebrow" data-t="printEyebrow">PRINTABLE WORKSHEETS</p><h2 id="pdf-title" data-t="pdfTitle">PDF exercise sheets</h2></div><span class="resource-tag">PDF · A4</span></div><p data-t="pdfDescription">French-language printable worksheets with exercises first and corrections in a separate section.</p><div class="resource-grid">
+<article class="resource-card"><h3 data-t="simplePdfTitle">Simple averages — PDF</h3><p data-t="simplePdfDescription">10 easy exercises and their corrections.</p><a href="resources/simple-average-practice-fr.pdf" download data-t="downloadPdf">Download worksheet (PDF)</a></article>
+<article class="resource-card"><h3 data-t="weightedPdfTitle">Weighted averages — PDF</h3><p data-t="weightedPdfDescription">10 medium exercises and their corrections.</p><a href="resources/weighted-average-practice-fr.pdf" download data-t="downloadPdf">Download worksheet (PDF)</a></article></div></section>
+<aside class="resource-notice"><strong data-t="noticeTitle">Important academic note</strong><p data-t="noticeText">The public profile catalog currently contains draft metadata only. It does not certify official coefficients, grading rules or institutional requirements. Confirm those details with the relevant institution.</p></aside>
+</main><footer><span>© <span id="year"></span> Calcora</span><span class="footer-links"><a href="index.html" data-t="home">Home</a> · <a href="pages/faq.html">FAQ</a> · <a href="pages/privacy.html" data-t="privacy">Privacy</a> · <a href="pages/contact.html" data-t="contact">Contact</a></span></footer>
+</body></html>
