@@ -1,5 +1,5 @@
 """Mathematical helpers used by Calcora development tools."""
 
-from .averages import weighted_average
+from .averages import simple_average, weighted_average
 
-__all__ = ["weighted_average"]
+__all__ = ["simple_average", "weighted_average"]
