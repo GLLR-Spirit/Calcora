@@ -111,3 +111,33 @@ test("shared calculator locales contain the same keys and every page key is tran
     assert.match(html, /id=["']theme-toggle["'][^>]*aria-label=["']Toggle theme["']/, file + " needs an accessible theme control");
   }
 });
+
+
+test("calculator form controls have accessible names and result regions announce updates", () => {
+  const root = path.join(__dirname, "..");
+  const calculatorRoot = path.join(root, "calculators");
+  function walk(dir) {
+    return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
+      const full = path.join(dir, entry.name);
+      return entry.isDirectory() ? walk(full) : entry.isFile() && entry.name.endsWith(".html") ? [full] : [];
+    });
+  }
+  for (const file of walk(calculatorRoot)) {
+    const relative = path.relative(root, file).split(path.sep).join("/");
+    const html = fs.readFileSync(file, "utf8");
+    const explicitLabels = new Set([...html.matchAll(/<label\b[^>]*\bfor=["']([^"']+)["'][^>]*>/gi)].map(match => match[1]));
+    const labelRanges = [...html.matchAll(/<label\b[^>]*>[\s\S]*?<\/label>/gi)]
+      .map(match => ({ start: match.index, end: match.index + match[0].length }));
+    for (const control of html.matchAll(/<(input|select|textarea)\b([^>]*)>/gi)) {
+      const attrs = control[2];
+      const id = attrs.match(/\bid=["']([^"']+)["']/i)?.[1];
+      const hasAriaName = /\baria-label=["'][^"']+["']/i.test(attrs) || /\baria-labelledby=["'][^"']+["']/i.test(attrs);
+      const hasLabel = (id && explicitLabels.has(id)) || labelRanges.some(range => control.index > range.start && control.index < range.end);
+      assert.ok(hasAriaName || hasLabel, relative + " contains an input/select/textarea without an accessible name: " + control[0]);
+    }
+    for (const result of html.matchAll(/<[^>]+class=["'][^"']*\bresult\b[^"']*["'][^>]*>/gi)) {
+      assert.match(result[0], /\brole=["']status["']/i, relative + " result region needs role=status");
+      assert.match(result[0], /\baria-live=["']polite["']/i, relative + " result region needs polite announcements");
+    }
+  }
+});
