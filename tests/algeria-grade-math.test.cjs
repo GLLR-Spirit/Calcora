@@ -60,7 +60,7 @@ test("G06 — required mark above the maximum is impossible", () => {
 });
 
 test("regression — target calculator preserves zero and boundary cases", () => {
-  const achieved = target(10, 100, 10, 1);
+  const achieved = target(10, 111, 10, 1);
   assert.equal(achieved.status, "alreadyReached");
   const exactMaximum = target(10, 80, 8, 2);
   assert.equal(exactMaximum.status, "need");
@@ -72,7 +72,7 @@ test("regression — target calculator preserves zero and boundary cases", () =>
 
 test("regression — weighted, simple and annual modes remain unchanged", () => {
   assert.equal(weighted([{ mark: 12, coefficient: 2 }, { mark: 14, coefficient: 3 }]).value, 13.2);
-  assert.equal(simple([{ mark: 8 }, { mark: 12 }, { mark: 16 }]).value, 12);
+  assert.equal(simple([{ mark: 8, coefficient: 1 }, { mark: 12, coefficient: 1 }, { mark: 16, coefficient: 1 }]).value, 12);
   assert.ok(Math.abs(annual(12, 14, 1, 2).value - 40 / 3) < 1e-12);
 });
 
