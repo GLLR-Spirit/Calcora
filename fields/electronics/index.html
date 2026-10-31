@@ -1,7 +1,71 @@
-<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta charset="utf-8"><meta name="description" content="Explore Calcora's electronics learning resources and planned tools for voltage, current, resistance and power."><title>Electronics — Calcora</title><link rel="stylesheet" href="../../assets/css/base.css"><link rel="stylesheet" href="../../assets/css/theme-light.css">  <link rel="canonical" href="https://gllr-spirit.github.io/Calcora/fields/electronics/">
-  <meta property="og:title" content="Electronics — Calcora">
-  <meta property="og:description" content="Explore Calcora's electronics learning resources and planned tools for voltage, current, resistance and power.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://gllr-spirit.github.io/Calcora/fields/electronics/">
-  <meta property="og:site_name" content="Calcora">
-</head><body><main class="page"><h1>Electronics / Électronique</h1><p>Planned: Ohm's law, resistors, voltage dividers and electrical power.</p><a href="../../index.html">Home</a></main></body></html>
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light" data-asset-root="../../" data-page-title="pageElecTitle" data-page-description="pageElecIntro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Electronics resources and tools — Calcora learning resources and related tools.">
+<meta name="theme-color" content="#eef2ff">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<title>Electronics resources and tools — Calcora</title>
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/theme-light.css" id="theme-stylesheet">
+<link rel="canonical" href="https://gllr-spirit.github.io/Calcora/fields/electronics/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Electronics resources and tools — Calcora">
+<meta property="og:description" content="Electronics resources and tools — Calcora learning resources and related tools.">
+<meta property="og:url" content="https://gllr-spirit.github.io/Calcora/fields/electronics/">
+<meta property="og:site_name" content="Calcora">
+<script defer src="../../locales/en.js"></script>
+<script defer src="../../locales/fr.js"></script>
+<script defer src="../../locales/ar.js"></script>
+<script defer src="../../assets/js/content-pages.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../../index.html">◉ Calcora</a>
+  <nav class="site-nav" aria-label="Primary navigation">
+    <a href="../../index.html" data-i18n="siteHome">Home</a>
+    <a href="../../study-hub.html" data-i18n="siteStudyHub">Study Hub</a>
+    <label class="visually-hidden" for="language-select" data-i18n="languageLabel">Language</label>
+    <select id="language-select" aria-label="Language">
+      <option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option>
+    </select>
+    <button id="theme-toggle" type="button" aria-label="Toggle theme">☾</button>
+  </nav>
+</header>
+<main class="page content-page" id="main-content">
+  <p class="breadcrumb"><a href="../../index.html" data-i18n="siteHome">Home</a> / Calcora</p>
+  <h1 data-i18n="pageElecTitle">Electronics resources and tools</h1>
+  <p class="section-description" data-i18n="pageElecIntro">Review basic electrical quantities and formulas, and use Calcora's available measurement and unit-conversion tools. Dedicated circuit simulators are not available yet.</p>
+  <section aria-labelledby="available-tools">
+    <h2 id="available-tools" data-i18n="siteTools">Available tools</h2>
+    <div class="grid">
+      <a class="card" href="../../calculators/science/measurements.html" aria-label="Open related resource" data-i18n-aria-label="elecMeasureTitle"><h3 data-i18n="elecMeasureTitle">Measurements</h3><p data-i18n="elecMeasureDesc">Use the science measurement tools for supported geometric and motion calculations; they are not circuit simulators.</p><span class="section-link" data-i18n="siteOpen">Open tool</span></a>
+      <a class="card" href="../../calculators/conversions/units.html" aria-label="Open related resource" data-i18n-aria-label="elecUnitsTitle"><h3 data-i18n="elecUnitsTitle">Units and prefixes</h3><p data-i18n="elecUnitsDesc">Convert compatible metric units and pay attention to prefixes such as milli-, micro- and kilo-.</p><span class="section-link" data-i18n="siteOpen">Open tool</span></a>
+      <a class="card" href="../../learning-lab.html" aria-label="Open related resource" data-i18n-aria-label="elecLearningTitle"><h3 data-i18n="elecLearningTitle">Learning resources</h3><p data-i18n="elecLearningDesc">Use the Learning Lab to review formulas and technical concepts, then practise with study exercises.</p><span class="section-link" data-i18n="siteOpen">Open tool</span></a>
+    </div>
+  </section>
+  <section class="calculation-explainer" aria-labelledby="formula-reference">
+    <h2 id="formula-reference" data-i18n="siteFormulas">Formula reference</h2>
+    <ul>
+        <li><code data-i18n="elecOhmFormula">Ohm's law: V = R × I</code></li>
+        <li><code data-i18n="elecPowerFormula">Electrical power: P = V × I</code></li>
+        <li><code data-i18n="elecDividerFormula">Ideal voltage divider: Vout = Vin × R₂ / (R₁ + R₂)</code></li>
+    </ul>
+  </section>
+  <aside class="page-note" aria-labelledby="important-information">
+    <h2 id="important-information" data-i18n="siteImportant">Important information</h2>
+    <p data-i18n="elecAvailability">These formulas assume simple DC circuits and ideal components. Check component ratings, circuit topology and units before applying them.</p>
+  </aside>
+</main>
+<footer>
+  <span>© <span id="year"></span> Calcora</span>
+  <span class="footer-links">
+    <a href="../../pages/about.html" data-i18n="siteAbout">About</a> ·
+    <a href="../../pages/faq.html" data-i18n="siteFAQ">FAQ</a> ·
+    <a href="../../pages/privacy.html" data-i18n="sitePrivacy">Privacy</a> ·
+    <a href="../../pages/contact.html" data-i18n="siteContact">Contact</a>
+  </span>
+</footer>
+</body>
+</html>

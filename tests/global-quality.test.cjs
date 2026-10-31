@@ -95,10 +95,12 @@ test("every calculator HTML page has a unique title, description and canonical U
 
 test("shared calculator locales contain the same keys and every page key is translated", () => {
   const localeFiles = ["en", "fr", "ar"].map(code => fs.readFileSync(path.join(__dirname, "..", "locales", code + ".js"), "utf8"));
-  const keySets = localeFiles.map(source => {
-    const match = source.match(/CALCORA_LOCALES\.(?:en|fr|ar)=\{([\s\S]*?)\};/);
-    assert.ok(match, "locale dictionary should be present");
-    return [...match[1].matchAll(/([A-Za-z_$][\w$]*)\s*:/g)].map(item => item[1]).sort();
+  const keySets = localeFiles.map((source, index) => {
+    const context = { window: {} };
+    vm.runInNewContext(source, context);
+    const locale = ["en", "fr", "ar"][index];
+    assert.ok(context.window.CALCORA_LOCALES?.[locale], locale + " locale dictionary should be present");
+    return Object.keys(context.window.CALCORA_LOCALES[locale]).sort();
   });
   assert.deepEqual(keySets[1], keySets[0], "French locale keys should match English");
   assert.deepEqual(keySets[2], keySets[0], "Arabic locale keys should match English");

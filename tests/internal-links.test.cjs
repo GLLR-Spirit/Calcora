@@ -239,3 +239,13 @@ test("all local HTML fragment links resolve to an existing id or named anchor", 
 
   assert.deepEqual(missing, [], "Broken local HTML fragment links were found");
 });
+
+
+test("every published HTML page has a footer landmark", () => {
+  const pages = listHtmlFiles(root);
+  const missing = pages
+    .map(file => ({ file, html: fs.readFileSync(file, "utf8") }))
+    .filter(entry => !entry.html.toLowerCase().includes("<footer"))
+    .map(entry => path.relative(root, entry.file).replace(/\\\\/g, "/"));
+  assert.deepEqual(missing, [], "Pages missing a footer landmark: " + missing.join(", "));
+});
