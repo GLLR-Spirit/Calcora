@@ -53,6 +53,50 @@ const internalLinks = new Set();
       }
     }
 
+    // Exercise all six completed subject pages in English, French and Arabic (RTL).
+    const subjectPages = [
+      "subjects/chemistry/index.html",
+      "subjects/mathematics/index.html",
+      "subjects/physics/index.html",
+      "fields/computer-science/index.html",
+      "fields/economics/index.html",
+      "fields/electronics/index.html"
+    ];
+    for (const path of subjectPages) {
+      await page.goto(new URL(path, base).href, { waitUntil: "domcontentloaded" });
+      assert.equal(await page.locator("footer a").count(), 4, path + " should expose four footer links");
+      assert.equal(await page.locator(".card").count(), 3, path + " should expose three related tool cards");
+      const footerTargets = await page.locator("footer a").evaluateAll(nodes => nodes.map(a => a.href));
+      for (const href of footerTargets) {
+        const response = await page.request.get(href);
+        assert.equal(response.status(), 200, path + " footer target should resolve: " + href);
+      }
+      for (const width of [360, 1365]) {
+        await page.setViewportSize({ width, height: width < 500 ? 844 : 900 });
+        for (const language of ["en", "fr", "ar"]) {
+          await page.locator("#language-select").selectOption(language);
+          await page.waitForFunction(code => document.documentElement.lang === code, language);
+          const state = await page.evaluate(() => ({
+            direction: document.documentElement.dir,
+            viewport: document.documentElement.clientWidth,
+            content: document.documentElement.scrollWidth,
+            title: document.title,
+            footerVisible: [...document.querySelectorAll("footer a")].every(link => link.getClientRects().length > 0)
+          }));
+          assert.equal(state.direction, language === "ar" ? "rtl" : "ltr", path + " should set direction for " + language);
+          assert.ok(state.title.length > 0, path + " should have a translated title");
+          assert.ok(state.footerVisible, path + " footer links should remain visible");
+          if (state.content > state.viewport + 2) failures.push(path + " overflows at " + width + "px in " + language);
+          if (language === "ar" && width === 360) {
+            await page.screenshot({ path: "artifacts/" + path.split("/")[1] + "-ar-mobile.png", fullPage: true });
+          }
+        }
+      }
+      const beforeTheme = await page.locator("html").getAttribute("data-theme");
+      await page.locator("#theme-toggle").click();
+      assert.notEqual(await page.locator("html").getAttribute("data-theme"), beforeTheme, path + " theme control should work");
+    }
+
     for (const href of internalLinks) {
       try {
         const response = await page.request.get(href, { timeout: 10000 });
