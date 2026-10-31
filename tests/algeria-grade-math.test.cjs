@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const { calculateGrade } = require("../assets/js/algeria-grade-math.js");
+const { calculateForecast } = require("../assets/js/bac-simulator.js");
 
 const base = { min: 0, max: 20 };
 const weighted = (rows) => calculateGrade({ ...base, type: "weighted", rows });
@@ -105,4 +106,76 @@ test("Algerian grade page displays the already-reached state in all three langua
   for (const translation of ["The target has already been reached", "L’objectif est déjà atteint", "تم بلوغ الهدف بالفعل"]) {
     assert.ok(source.includes(translation), "Missing localized message: " + translation);
   }
+});
+
+
+test("edge cases — reject zero, negative, blank and non-finite weighted coefficients", () => {
+  for (const coefficient of [0, -1, "", "   ", null, undefined, NaN, Infinity, "not-a-number"]) {
+    const result = weighted([{ mark: 12, coefficient }]);
+    assert.equal(result.valid, false, "coefficient should be rejected: " + String(coefficient));
+  }
+});
+
+test("edge cases — reject blank marks and marks outside the configured scale", () => {
+  for (const mark of ["", "   ", null, undefined, -0.01, 20.01, NaN, Infinity]) {
+    assert.equal(weighted([{ mark, coefficient: 1 }]).valid, false, "mark should be rejected: " + String(mark));
+  }
+});
+
+test("edge cases — accept marks at both scale limits", () => {
+  assert.equal(weighted([{ mark: 0, coefficient: 1 }]).value, 0);
+  assert.equal(weighted([{ mark: 20, coefficient: 1 }]).value, 20);
+});
+
+test("edge cases — annual calculation rejects invalid weights, blank periods and overflow", () => {
+  for (const [a, b, wa, wb] of [
+    ["", 12, 1, 1], [12, " ", 1, 1], [12, 14, 0, 1],
+    [12, 14, -1, 1], [12, 14, 1, 0], [12, 14, Infinity, 1],
+    [12, 14, 1e308, 1e308]
+  ]) {
+    assert.equal(annual(a, b, wa, wb).valid, false);
+  }
+  assert.equal(annual(0, 20, 1, 1).value, 10);
+});
+
+test("edge cases — target calculation rejects invalid coefficients and overflow", () => {
+  for (const [done, remaining] of [[-1, 1], [1, 0], [1, -1], [NaN, 1], [1, Infinity], [1e308, 1e308]]) {
+    assert.equal(target(10, 50, done, remaining).valid, false);
+  }
+  assert.equal(target(10, -1, 1, 1).valid, false);
+  assert.equal(target(21, 10, 1, 1).valid, false);
+});
+
+test("rounding — calculations preserve precision and formatting is a presentation concern", () => {
+  const result = annual(12, 14, 1, 2);
+  assert.ok(Math.abs(result.value - 40 / 3) < 1e-12);
+  assert.notEqual(result.value, 13.33);
+  assert.equal(result.value.toFixed(2), "13.33");
+});
+
+test("BAC forecast — weighted average and required mark scenarios", () => {
+  const result = calculateForecast([
+    { name: "Math", mark: "12", coefficient: "2" },
+    { name: "Physics", mark: "", coefficient: "3" }
+  ], "14");
+  assert.equal(result.valid, true);
+  assert.equal(result.currentAverage, 12);
+  assert.equal(result.requiredMark, 15.333333333333334);
+  assert.equal(result.impossible, false);
+});
+
+test("BAC forecast — reject blank target, invalid coefficients, invalid marks and overflow", () => {
+  const rows = [{ name: "Math", mark: "12", coefficient: "1" }];
+  for (const goal of ["", " ", null, undefined, NaN, Infinity, -1, 21]) {
+    assert.equal(calculateForecast(rows, goal).valid, false, "goal should be rejected: " + String(goal));
+  }
+  for (const coefficient of ["", " ", null, 0, -1, NaN, Infinity]) {
+    assert.equal(calculateForecast([{ name: "Math", mark: "12", coefficient }], 10).valid, false);
+  }
+  assert.equal(calculateForecast([{ name: "Math", mark: " ", coefficient: 1 }], 10).valid, true);
+  assert.equal(calculateForecast([{ name: "Math", mark: "21", coefficient: 1 }], 10).valid, false);
+  assert.equal(calculateForecast([
+    { name: "A", mark: "20", coefficient: 1e308 },
+    { name: "B", mark: "20", coefficient: 1e308 }
+  ], 10).valid, false);
 });
