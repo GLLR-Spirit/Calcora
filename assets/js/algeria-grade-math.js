@@ -16,7 +16,7 @@ function calculateGrade(input){
     if(target===null||current===null||done===null||remaining===null||target<min||target>max||current<0||done<0||remaining<=0)return {valid:false,reason:"input"};
     const totalCoefficient=done+remaining,numerator=target*totalCoefficient-current,value=numerator/remaining;
     if(!Number.isFinite(totalCoefficient)||!Number.isFinite(numerator)||!Number.isFinite(value))return {valid:false,reason:"input"};
-    return value<min||value>max?{valid:true,impossible:true,value,label:"need"}:{valid:true,value,label:"need"};
+    const status=value<min?"alreadyReached":value>max?"impossible":"need";return {valid:true,value,label:"need",status,alreadyReached:status==="alreadyReached",impossible:status==="impossible"};
   }
   if(!Array.isArray(input.rows)||!input.rows.length)return {valid:false,reason:"rows"};
   let total=0,denominator=0;
