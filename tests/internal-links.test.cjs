@@ -245,7 +245,7 @@ test("every published HTML page has a footer landmark", () => {
   const pages = listHtmlFiles(root);
   const missing = pages
     .map(file => ({ file, html: fs.readFileSync(file, "utf8") }))
-    .filter(entry => !/<footer\\b[^>]*>/i.test(entry.html))
+    .filter(entry => !entry.html.toLowerCase().includes("<footer"))
     .map(entry => path.relative(root, entry.file).replace(/\\\\/g, "/"));
   assert.deepEqual(missing, [], "Pages missing a footer landmark: " + missing.join(", "));
 });
