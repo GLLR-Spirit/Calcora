@@ -179,3 +179,15 @@ test("BAC forecast — reject blank target, invalid coefficients, invalid marks 
     { name: "B", mark: "20", coefficient: 1e308 }
   ], 10).valid, false);
 });
+
+
+test("BAC forecast — a required mark of exactly zero is not mislabeled as already achieved", () => {
+  const result = calculateForecast([
+    { name: "Completed", mark: "20", coefficient: 1 },
+    { name: "Remaining", mark: "", coefficient: 1 }
+  ], 10);
+  assert.equal(result.valid, true);
+  assert.equal(result.requiredMark, 0);
+  assert.equal(result.targetReached, false);
+  assert.equal(result.impossible, false);
+});
