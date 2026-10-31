@@ -12,6 +12,11 @@ for (const language of languages) {
   const context = { window: {} };
   vm.runInNewContext(source, context, { filename: language + '.js' });
   dictionaries[language] = context.window.CALCORA_LOCALES[language];
+  const objectMatch = source.match(/CALCORA_LOCALES\\.(?:fr|en|ar)=\\{([\\s\\S]*?)\\};/);
+  assert.ok(objectMatch, language + ' locale source must contain a dictionary literal');
+  const sourceKeys = [...objectMatch[1].matchAll(/(?:^|,)([A-Za-z_$][\\w$]*)\\s*:/g)].map(match => match[1]);
+  const duplicates = sourceKeys.filter((key, index) => sourceKeys.indexOf(key) !== index);
+  assert.deepEqual(duplicates, [], language + ' locale must not declare duplicate keys');
   assert.ok(dictionaries[language] && typeof dictionaries[language] === 'object',
     language + ' locale must export an object');
 }
