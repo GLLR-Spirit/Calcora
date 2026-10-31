@@ -118,3 +118,38 @@ test('homepage and discovery controls include mobile and reduced-motion styles',
     assert.ok(discovery.includes(label), `Missing localized discovery label: ${label}`);
   }
 });
+
+
+test('six subject resource pages provide complete translations, navigation, footer and RTL support', () => {
+  const files = [
+    'subjects/chemistry/index.html',
+    'subjects/mathematics/index.html',
+    'subjects/physics/index.html',
+    'fields/computer-science/index.html',
+    'fields/economics/index.html',
+    'fields/electronics/index.html'
+  ];
+  const contentScript = read('assets/js/content-pages.js');
+  assert.match(contentScript, /document\.documentElement\.dir=code==="ar"\?"rtl":"ltr"/);
+  assert.match(contentScript, /calcora-language/);
+  assert.match(contentScript, /calcora-theme/);
+  for (const file of files) {
+    const html = read(file);
+    assert.match(html, /<main\b[^>]*id="main-content"/, file + ': main landmark missing');
+    assert.match(html, /<footer>/, file + ': footer missing');
+    assert.match(html, /id="language-select"/, file + ': language selector missing');
+    assert.match(html, /id="theme-toggle"/, file + ': theme toggle missing');
+    assert.match(html, /assets\/js\/content-pages\.js/, file + ': shared localization script missing');
+    assert.match(html, /favicon\.svg/, file + ': favicon missing');
+    assert.match(html, /rel="canonical"/, file + ': canonical URL missing');
+    assert.ok((html.match(/class="card"/g) || []).length >= 3, file + ': related tools are missing');
+    const keys = [...html.matchAll(/data-i18n="([^"]+)"/g)].map(match => match[1]);
+    for (const language of ['en', 'fr', 'ar']) {
+      const locale = loadLocale(read(`locales/${language}.js`))[language];
+      for (const key of keys) {
+        assert.equal(typeof locale[key], 'string', file + ': missing ' + language + ' translation for ' + key);
+        assert.ok(locale[key].trim(), file + ': empty ' + language + ' translation for ' + key);
+      }
+    }
+  }
+});
