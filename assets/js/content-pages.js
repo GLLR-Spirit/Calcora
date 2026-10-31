@@ -18,7 +18,7 @@ function applyLanguage(code){
     const value=locale[element.dataset.i18nAriaLabel];
     if(typeof value==="string")element.setAttribute("aria-label",value);
   });
-  document.title=locale[document.documentElement.dataset.pageTitle]||"Calcora";
+  document.title=(locale[document.documentElement.dataset.pageTitle]||"Calcora")+" — Calcora";
   const description=$('meta[name="description"]');
   if(description)description.content=locale[document.documentElement.dataset.pageDescription]||"";
   if(languageSelect){
