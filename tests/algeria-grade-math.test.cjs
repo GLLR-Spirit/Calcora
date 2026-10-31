@@ -190,15 +190,17 @@ test("BAC forecast — a required mark of exactly zero is not mislabeled as alre
   ], 10);
   assert.equal(result.valid, true);
   assert.equal(result.requiredMark, 0);
-  assert.equal(result.targetReached, false);
+  assert.equal(result.targetReached, true);
+  assert.equal(result.alreadyReached, false);
   assert.equal(result.impossible, false);
 });
 
 
-test("LMD planner — invalid UE data must invalidate semester and annual aggregates, not produce partial averages", () => {
+test("LMD planner — invalid UE data invalidates semester and annual aggregates", () => {
   const source = fs.readFileSync(path.join(__dirname, "..", "assets/js/university-planner.js"), "utf8");
-  assert.match(source, /if\\(groups\\.some\\(g=>g\\.invalid\\)\\)return null/);
-  assert.match(source, /Math\\.abs\\(g\\.coeff-uc\\)>1e-9/);
-  assert.match(source, /weighted\\(\\[\\.\\.\\.a,\\.\\.\\.b\\]\\)/);
-  assert.match(source, /Moyenne annuelle indicative/);
+  assert.ok(source.includes("function weighted(groups){if(groups.some(g=>g.invalid))return null;"));
+  assert.ok(source.includes("Math.abs(g.coeff-uc)>1e-9"));
+  assert.ok(source.includes("weighted([...a,...b])"));
+  assert.ok(source.includes("Moyenne annuelle indicative"));
+  assert.ok(source.includes("if(!Number.isFinite(g.sum)||!Number.isFinite(g.weight))g.invalid=true"));
 });
