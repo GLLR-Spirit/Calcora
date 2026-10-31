@@ -97,3 +97,12 @@ test("education profile delegates target classification to shared math and local
     assert.ok(source.includes(translation), "Missing localized message: " + translation);
   }
 });
+
+test("Algerian grade page displays the already-reached state in all three languages", () => {
+  const source = fs.readFileSync(path.join(__dirname, "..", "assets/js/algeria-grades.js"), "utf8");
+  assert.match(source, /result\.status==="alreadyReached"/);
+  assert.match(source, /result\.status==="impossible"/);
+  for (const translation of ["The target has already been reached", "L’objectif est déjà atteint", "تم بلوغ الهدف بالفعل"]) {
+    assert.ok(source.includes(translation), "Missing localized message: " + translation);
+  }
+});
