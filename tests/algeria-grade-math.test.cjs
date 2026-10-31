@@ -92,8 +92,10 @@ test("education profile pages load the shared calculator before their UI script"
 test("education profile delegates target classification to shared math and localizes achieved status", () => {
   const source = fs.readFileSync(path.join(__dirname, "..", "assets/js/education-profile.js"), "utf8");
   assert.match(source, /CALCORA_ALGERIA_GRADE_MATH\.calculateGrade/);
-  assert.match(source, /targetResult\.status==="alreadyReached"/);
-  assert.match(source, /targetResult\.status==="impossible"/);
+  assert.match(source, /const payload=\\{type:mode,min,max\\}/);
+  assert.match(source, /calculateGrade\\(payload\\)/);
+  assert.match(source, /result\.status==="alreadyReached"/);
+  assert.match(source, /result\.status==="impossible"/);
   for (const translation of ["The target has already been reached", "L’objectif est déjà atteint", "تم بلوغ الهدف بالفعل"]) {
     assert.ok(source.includes(translation), "Missing localized message: " + translation);
   }
