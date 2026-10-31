@@ -14,6 +14,10 @@ function applyLanguage(code){
     const value=locale[element.dataset.i18n];
     if(typeof value==="string")element.textContent=value;
   });
+  document.querySelectorAll("[data-i18n-aria-label]").forEach(element=>{
+    const value=locale[element.dataset.i18nAriaLabel];
+    if(typeof value==="string")element.setAttribute("aria-label",value);
+  });
   document.title=locale[document.documentElement.dataset.pageTitle]||"Calcora";
   const description=$('meta[name="description"]');
   if(description)description.content=locale[document.documentElement.dataset.pageDescription]||"";
