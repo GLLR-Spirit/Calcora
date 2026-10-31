@@ -191,3 +191,12 @@ test("BAC forecast — a required mark of exactly zero is not mislabeled as alre
   assert.equal(result.targetReached, false);
   assert.equal(result.impossible, false);
 });
+
+
+test("LMD planner — invalid UE data must invalidate semester and annual aggregates, not produce partial averages", () => {
+  const source = fs.readFileSync(path.join(__dirname, "..", "assets/js/university-planner.js"), "utf8");
+  assert.match(source, /if\\(groups\\.some\\(g=>g\\.invalid\\)\\)return null/);
+  assert.match(source, /Math\\.abs\\(g\\.coeff-uc\\)>1e-9/);
+  assert.match(source, /weighted\\(\\[\\.\\.\\.a,\\.\\.\\.b\\]\\)/);
+  assert.match(source, /Moyenne annuelle indicative/);
+});
