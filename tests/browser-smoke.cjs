@@ -33,6 +33,15 @@ const internalLinks = new Set();
         if (!title.trim()) failures.push(url + " has an empty document title");
         if (!description.trim()) failures.push(url + " has no meta description");
         if (bodyText.length < 15) failures.push(url + " has almost no visible page content");
+        const footerCount = await page.locator("footer").count();
+        if (footerCount !== 1) failures.push(url + " should have exactly one footer landmark");
+        const footerLinks = await page.locator("footer a").evaluateAll(nodes => nodes.map(a => ({
+          href: a.href,
+          label: (a.innerText || a.getAttribute("aria-label") || "").trim()
+        })));
+        for (const link of footerLinks) {
+          if (!link.label || !link.href) failures.push(url + " has an incomplete footer link");
+        }
 
         const links = await page.locator("a[href]").evaluateAll(nodes => nodes.map(a => ({
           href: a.href,
