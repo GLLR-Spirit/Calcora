@@ -44,9 +44,9 @@ for (const language of languages) {
     if (index > 0 && block[index - 1] !== ",") continue;
     if (!/[A-Za-z_$]/.test(char)) continue;
     let end = index + 1;
-    while (end < block.length && /[\\w$]/.test(block[end])) end++;
+    while (end < block.length && /[A-Za-z0-9_$]/.test(block[end])) end++;
     let colon = end;
-    while (/\\s/.test(block[colon] || "")) colon++;
+    while ([" ", "\\n", "\\t", "\\r"].includes(block[colon] || "")) colon++;
     if (block[colon] === ":") sourceKeys.push(block.slice(index, end));
   }
   const duplicates = sourceKeys.filter((key, index) => sourceKeys.indexOf(key) !== index);
